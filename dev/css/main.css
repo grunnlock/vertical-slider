@@ -1,8 +1,3 @@
-/* --------------------------------
-
-Primary style (Removable)
-
--------------------------------- */
 *,
 *::after,
 *::before {
@@ -44,13 +39,17 @@ a {
 .cd-section:nth-of-type(5) > .cd-section-inside {
   background-image: url('../images/img-5.jpg');
 }
-/* --------------------------------
-
-Main Components
-
--------------------------------- */
 body {
   overflow: hidden;
+}
+.cd-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  width: 100%;
+  height: 100vh;
+  opacity: 0;
 }
 .cd-section-inside {
   position: absolute;
@@ -75,22 +74,13 @@ body {
   -o-transform: translateZ(0);
   transform: translateZ(0);
 }
-.cd-section {
-  position: absolute;
-  top: 0;
-  left: 0;
-  visibility: hidden;
-  width: 100%;
-  height: 100vh;
-  opacity: 0;
-}
 .cd-vertical-nav {
   position: fixed;
   z-index: 1;
   top: 50%;
   right: 3%;
   bottom: auto;
-  display: none;
+  display: block;
   -webkit-transform: translateY(-50%);
   -moz-transform: translateY(-50%);
   -ms-transform: translateY(-50%);
@@ -114,16 +104,6 @@ body {
   -o-transform: rotate(180deg);
   transform: rotate(180deg);
 }
-.cd-vertical-nav a.inactive {
-  visibility: hidden;
-  -webkit-transition: opacity .2s 0s, visibility 0s .2s;
-  -moz-transition: opacity .2s 0s, visibility 0s .2s;
-  transition: opacity .2s 0s, visibility 0s .2s;
-  opacity: 0;
-}
-.cd-vertical-nav {
-  display: block;
-}
 .container {
   position: relative;
   width: 100%;
@@ -135,5 +115,5 @@ body {
   padding: 0;
 }
 .layer img {
-  width: 100%;
+  max-width: 100%;
 }

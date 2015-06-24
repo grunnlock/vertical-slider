@@ -1,162 +1,139 @@
 @import '_variables.less';
 @import '_mixins.less';
 
-/* --------------------------------
-
-Primary style (Removable)
-
--------------------------------- */
+// Vertical scroller styling (optional)
 *,
 *::after,
 *::before {
-  box-sizing: border-box;
+   box-sizing: border-box;
 }
 
 html {
-  font-size: 62.5%;
+   font-size: 62.5%;
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 1.6rem;
+   font-family: 'Open Sans', sans-serif;
+   font-size: 1.6rem;
 
-  color: #fff;
-  background-color: #22283f;
+   color: #fff;
+   background-color: #22283f;
 
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
 }
 
 a {
-  text-decoration: none;
+   text-decoration: none;
 
-  color: #267481;
+   color: #267481;
 }
 
 .cd-section h2 {
-  font-size: 4rem;
-  font-weight: 300;
-  line-height: 100vh;
-  text-align: center;
+   font-size: 4rem;
+   font-weight: 300;
+   line-height: 100vh;
+   text-align: center;
 }
 
 .cd-section:nth-of-type(1) > .cd-section-inside {
-  background-image: url('../images/img-1.jpg');
+   background-image: url('../images/img-1.jpg');
 }
 .cd-section:nth-of-type(2) > .cd-section-inside {
-  background-image: url('../images/img-2.jpg');
+   background-image: url('../images/img-2.jpg');
 }
 .cd-section:nth-of-type(3) > .cd-section-inside {
-  background-image: url('../images/img-3.jpg');
+   background-image: url('../images/img-3.jpg');
 }
 .cd-section:nth-of-type(4) > .cd-section-inside {
-  background-image: url('../images/img-4.jpg');
+   background-image: url('../images/img-4.jpg');
 }
 .cd-section:nth-of-type(5) > .cd-section-inside {
-  background-image: url('../images/img-5.jpg');
+   background-image: url('../images/img-5.jpg');
 }
 
-/* --------------------------------
-
-Main Components
-
--------------------------------- */
+// Vertical scroller
 
 body {
-  overflow: hidden;
-}
-
-.cd-section-inside {
-  position: absolute;
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  visibility: visible;
-  overflow: hidden;
-  width: 100%;
-  height: inherit;
-
-  background-repeat: no-repeat;
-  background-position: center center;
-
-  -webkit-backface-visibility: hidden;
-          backface-visibility: hidden;
-  .background-size( cover );
-  .transform( translateZ(0) );
+   overflow: hidden;
 }
 
 .cd-section {
-  position: absolute;
-  top: 0;
-  left: 0;
+   position: absolute;
+   top: 0;
+   left: 0;
 
-  visibility: hidden;
-  width: 100%;
-  height: 100vh;
+   visibility: hidden;
+   width: 100%;
+   height: 100vh;
 
-  opacity: 0;
+   opacity: 0;
+}
+
+.cd-section-inside {
+   position: absolute;
+   position: fixed;
+   top: 0;
+   left: 0;
+
+   visibility: visible;
+   overflow: hidden;
+   width: 100%;
+   height: inherit;
+
+   background-repeat: no-repeat;
+   background-position: center center;
+
+   -webkit-backface-visibility: hidden;
+           backface-visibility: hidden;
+   .background-size( cover );
+   .transform( translateZ(0) );
 }
 
 .cd-vertical-nav {
-  position: fixed;
-  z-index: 1;
-  top: 50%;
-  right: 3%;
-  bottom: auto;
+   position: fixed;
+   z-index: 1;
+   top: 50%;
+   right: 3%;
+   bottom: auto;
 
-  display: none;
+   display: block;
 
-  .transform( translateY(-50%) );
-}
+   .transform( translateY(-50%) );
+   a {
+      display: block;
+      overflow: hidden;
+      width: 40px;
+      height: 40px;
 
-.cd-vertical-nav a {
-  display: block;
-  overflow: hidden;
-  width: 40px;
-  height: 40px;
+      white-space: nowrap;
+      text-indent: 100%;
 
-  white-space: nowrap;
-  text-indent: 100%;
-
-  background: url('../images/cd-icon-arrow.svg') no-repeat center center;
+      background: url('../images/cd-icon-arrow.svg') no-repeat center center;
+   }
 }
 
 .cd-vertical-nav a.cd-prev {
-  margin-bottom: 10px;
+   margin-bottom: 10px;
 
-  .transform( rotate(180deg) );
-}
-
-.cd-vertical-nav a.inactive {
-  visibility: hidden;
-
-  -webkit-transition: opacity .2s 0s, visibility 0s .2s;
-     -moz-transition: opacity .2s 0s, visibility 0s .2s;
-          transition: opacity .2s 0s, visibility 0s .2s;
-
-  opacity: 0;
-}
-
-.cd-vertical-nav {
-  display: block;
+   .transform( rotate(180deg) );
 }
 
 // Parallax in sections
 
 .container {
-  position: relative;
+   position: relative;
 
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+   width: 100%;
+   max-width: 600px;
+   margin: 0 auto;
 }
 
 .scene {
-  margin: 0;
-  padding: 0;
+   margin: 0;
+   padding: 0;
 }
 
 .layer img {
-  width: 100%;
+   max-width: 100%;
 }
