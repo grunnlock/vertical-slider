@@ -7,25 +7,25 @@ Primary style (Removable)
 
 -------------------------------- */
 *, *::after, *::before {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 html {
-  font-size: 62.5%;
+	font-size: 62.5%;
 }
 
 body {
-  font-size: 1.6rem;
-  font-family: "Open Sans", sans-serif;
-  color: #ffffff;
-  background-color: #22283f;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-size: 1.6rem;
+	font-family: "Open Sans", sans-serif;
+	color: #ffffff;
+	background-color: #22283f;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 a {
-  color: #267481;
-  text-decoration: none;
+	color: #267481;
+	text-decoration: none;
 }
 
 .cd-section h2 {
@@ -48,16 +48,16 @@ Main Components
 -------------------------------- */
 
 body {
-  overflow: hidden;
+	overflow: hidden;
 }
 
 .cd-section-inside {
 	position: absolute;
 	height: inherit;
-
 	background-position: center center;
 	background-repeat: no-repeat;
-	background-size: cover;
+
+	.background-size( cover );
 
 	visibility: visible;
 	position: fixed;
@@ -66,11 +66,7 @@ body {
 	width: 100%;
 
 	/* Force Hardware Acceleration */
-	-webkit-transform: translateZ(0);
-	-moz-transform: translateZ(0);
-	-ms-transform: translateZ(0);
-	-o-transform: translateZ(0);
-	transform: translateZ(0);
+	.transform( translateZ(0) );
 
 	-webkit-backface-visibility: hidden;
 	backface-visibility: hidden;
@@ -87,17 +83,14 @@ body {
 }
 
 .cd-vertical-nav {
+	display: none;
 	position: fixed;
 	z-index: 1;
 	right: 3%;
 	top: 50%;
 	bottom: auto;
-	-webkit-transform: translateY(-50%);
-	-moz-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	-o-transform: translateY(-50%);
-	transform: translateY(-50%);
-	display: none;
+
+	.transform( translateY(-50%) );
 }
 
 .cd-vertical-nav a {
@@ -111,12 +104,9 @@ body {
 }
 
 .cd-vertical-nav a.cd-prev {
-	-webkit-transform: rotate(180deg);
-	-moz-transform: rotate(180deg);
-	-ms-transform: rotate(180deg);
-	-o-transform: rotate(180deg);
-	transform: rotate(180deg);
 	margin-bottom: 10px;
+
+	.transform( rotate(180deg) );
 }
 
 .cd-vertical-nav a.inactive {
