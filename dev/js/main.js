@@ -13,6 +13,20 @@ jQuery( document ).ready(function( $ ) {
     	prevArrow 		  = verticalNav.find('a.cd-prev'),
     	nextArrow 		  = verticalNav.find('a.cd-next');
 
+	// Initialize section style - scrollhijacking
+	var visibleSection   = sectionsAvailable.filter('.visible'),
+		topSection 		 = visibleSection.prevAll('.cd-section'),
+		bottomSection 	 = visibleSection.nextAll('.cd-section'),
+		animationParams  = {
+			visible: 'translateNone',
+			top: 'translateUp.half',
+			bottom: 'translateDown',
+			easing: 'easeInCubic',
+			duration: 800
+		};
+
+		console.log( animationParams );
+
 	// Init events
 	bindEvents();
 
@@ -22,85 +36,103 @@ jQuery( document ).ready(function( $ ) {
 
     function bindEvents() {
 
-		// Initialize section style - scrollhijacking
-		var visibleSection   = sectionsAvailable.filter('.visible'),
-			topSection 		 = visibleSection.prevAll('.cd-section'),
-			bottomSection 	 = visibleSection.nextAll('.cd-section'),
-			animationParams  = selectAnimation( animationType, false ),
-			animationVisible = animationParams[0],
-			animationTop 	 = animationParams[1],
-			animationBottom  = animationParams[2];
-
-		visibleSection.children('div').velocity(animationVisible, 1, function(){
+		visibleSection.children('div').velocity(animationParams.visible, 1, function() {
 			visibleSection.css('opacity', 1);
 	    	topSection.css('opacity', 1);
 	    	bottomSection.css('opacity', 1);
 		});
 
-        topSection.children('div').velocity( animationTop, 0 );
-        bottomSection.children('div').velocity( animationBottom, 0 );
+        topSection.children('div').velocity( animationParams.top, 0 );
+        bottomSection.children('div').velocity( animationParams.bottom, 0 );
 
-        // Initialize scroll action
+        // Bind events
+
+        // Scroll with mousewheel actions
 		$( window ).on( 'DOMMouseScroll mousewheel', scrollHijacking );
 
+		// Click actions on navigation
 		prevArrow.on( 'click', prevSection );
 		nextArrow.on( 'click', nextSection );
 
-		$( document ).on('keyup', function( event ){
-			if( event.which=='40' && !nextArrow.hasClass('inactive') ) {
+		// Keyboard arrows actions
+		$( document ).on('keyup', function( event ) {
+			if( event.which === '40' && !nextArrow.hasClass('inactive') ) {
 				nextSection();
-			} else if( event.which=='38' && (!prevArrow.hasClass('inactive') || ( prevArrow.hasClass('inactive') && $(window).scrollTop() != sectionsAvailable.eq(0).offset().top ) ) ) {
+			} else if( event.which === '38' && ( !prevArrow.hasClass('inactive') || ( prevArrow.hasClass('inactive') && $( window ).scrollTop() !== sectionsAvailable.eq(0).offset().top ) ) ) {
 				prevSection();
 			}
 		});
 
+		// Events for devices which support touch events
+		if( Modernizr.touch ) {
+
+			// Hammer.js
+		    var sections 		 = document.getElementById('cd-sections');
+		    var verticalScroller = new Hammer( sections );
+
+		    verticalScroller.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
+
+		    verticalScroller.on('swipeup', function( e ) {
+		    	nextSection();
+		    });
+
+		    verticalScroller.on('swipedown', function( e ) {
+		    	prevSection();
+		    });
+
+		}
+
     }
 
-	function transformSection(element, translateY, scaleValue, rotateXValue, opacityValue, boxShadow) {
-		//transform sections - normal scroll
-		element.velocity({
-			translateY: translateY+'vh',
-			scale: scaleValue,
-			rotateX: rotateXValue,
-			opacity: opacityValue,
-			boxShadowBlur: boxShadow+'px',
-			translateZ: 0,
-		}, 0);
-	}
-
-	function scrollHijacking (event) {
+	function scrollHijacking( event ) {
 		// on mouse scroll - check if animate section
-        if (event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0) {
+        if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
             delta--;
-            ( Math.abs(delta) >= scrollThreshold) && prevSection();
+
+            if( Math.abs( delta ) >= scrollThreshold ) {
+            	prevSection();
+        	} else {
+        		return false;
+        	}
         } else {
             delta++;
-            (delta >= scrollThreshold) && nextSection();
+
+            if( delta >= scrollThreshold ) {
+            	nextSection();
+        	} else {
+        		return false;
+        	}
         }
+
         return false;
     }
 
-    function prevSection(event) {
+    function prevSection( event ) {
     	//go to previous section
     	typeof event !== 'undefined' && event.preventDefault();
 
     	var visibleSection = sectionsAvailable.filter('.visible'),
-    		middleScroll = ( hijacking == 'off' && $(window).scrollTop() != visibleSection.offset().top) ? true : false;
-    	visibleSection = middleScroll ? visibleSection.next('.cd-section') : visibleSection;
-
-    	var animationParams = selectAnimation(animationType, middleScroll, 'prev');
+    		middleScroll   = false;
+    	// visibleSection = middleScroll ? visibleSection.next('.cd-section') : visibleSection;
 
         if( !animating && !visibleSection.is(":first-child") ) {
         	animating = true;
-            visibleSection.removeClass('visible').children('div').velocity(animationParams[2], animationParams[3], animationParams[4])
-            .end().prev('.cd-section').addClass('visible').children('div').velocity(animationParams[0] , animationParams[3], animationParams[4], function(){
+            visibleSection.removeClass('visible').children('div').velocity(animationParams.bottom, animationParams.easing, animationParams.duration)
+            .end().prev('.cd-section').addClass('visible').children('div').velocity(animationParams.visible , animationParams.easing, animationParams.duration, function(){
             	animating = false;
             });
 
             actual = actual - 1;
         }
+        // resetScroll();
 
-        resetScroll();
+		animationParams  = {
+			visible: 'translateNone',
+			top: 'translateUp.half',
+			bottom: 'translateDown',
+			easing: 'easeInCubic',
+			duration: 800
+		};
     }
 
     function nextSection( event ) {
@@ -110,23 +142,21 @@ jQuery( document ).ready(function( $ ) {
         var visibleSection = sectionsAvailable.filter('.visible'),
     		middleScroll = ( hijacking == 'off' && $(window).scrollTop() != visibleSection.offset().top) ? true : false;
 
-    	var animationParams = selectAnimation(animationType, middleScroll, 'next');
-
-        if(!animating && !visibleSection.is(":last-of-type") ) {
+        if(!animating && !visibleSection.is(':last-of-type') ) {
             animating = true;
-            visibleSection.removeClass('visible').children('div').velocity(animationParams[1], animationParams[3], animationParams[4] )
-            .end().next('.cd-section').addClass('visible').children('div').velocity(animationParams[0], animationParams[3], animationParams[4], function(){
+            visibleSection.removeClass('visible').children('div').velocity(animationParams.top, animationParams.easing, animationParams.duration )
+            .end().next('.cd-section').addClass('visible').children('div').velocity(animationParams.visible, animationParams.easing, animationParams.duration, function() {
             	animating = false;
             });
 
             actual = actual +1;
         }
-        resetScroll();
+        // resetScroll();
     }
 
-    function resetScroll() {
-        delta = 0;
-    }
+    // function resetScroll() {
+    //     delta = 0;
+    // }
 
 	function selectAnimation( animationName, middleScroll, direction ) {
 		var animationVisible = 'translateNone',
@@ -137,21 +167,6 @@ jQuery( document ).ready(function( $ ) {
 
 		return [animationVisible, animationTop, animationBottom, animDuration, easing];
 	}
-
-    // Hammer.js
-
-    var sections 		 = document.getElementById('cd-sections');
-    var verticalScroller = new Hammer( sections );
-
-    verticalScroller.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
-
-    verticalScroller.on('swipeup', function( e ) {
-    	nextSection();
-    });
-
-    verticalScroller.on('swipedown', function( e ) {
-    	prevSection();
-    });
 
     // Parallax.js
 
