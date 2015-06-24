@@ -53,27 +53,28 @@ body {
   overflow: hidden;
 }
 .cd-section-inside {
+  overflow: hidden;
   position: absolute;
   height: inherit;
   background-position: center center;
   background-repeat: no-repeat;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
   visibility: visible;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   /* Force Hardware Acceleration */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   -webkit-transform: translateZ(0);
   -moz-transform: translateZ(0);
   -ms-transform: translateZ(0);
   -o-transform: translateZ(0);
   transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
 }
 .cd-section {
   height: 100vh;
@@ -123,4 +124,17 @@ body {
 }
 .cd-vertical-nav {
   display: block;
+}
+.container {
+  position: relative;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+}
+.scene {
+  padding: 0;
+  margin: 0;
+}
+.layer img {
+  width: 100%;
 }

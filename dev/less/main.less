@@ -52,13 +52,11 @@ body {
 }
 
 .cd-section-inside {
+	overflow: hidden;
 	position: absolute;
 	height: inherit;
 	background-position: center center;
 	background-repeat: no-repeat;
-
-	.background-size( cover );
-
 	visibility: visible;
 	position: fixed;
 	top: 0;
@@ -66,10 +64,11 @@ body {
 	width: 100%;
 
 	/* Force Hardware Acceleration */
-	.transform( translateZ(0) );
-
 	-webkit-backface-visibility: hidden;
 	backface-visibility: hidden;
+
+	.background-size( cover );
+	.transform( translateZ(0) );
 }
 
 .cd-section {
@@ -119,4 +118,22 @@ body {
 
 .cd-vertical-nav {
 	display: block;
+}
+
+// Parallax in sections
+
+.container {
+	position: relative;
+	max-width: 600px;
+	width: 100%;
+	margin: 0 auto;
+}
+
+.scene {
+	padding: 0;
+	margin: 0;
+}
+
+.layer img {
+	width: 100%;
 }

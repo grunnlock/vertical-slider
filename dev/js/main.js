@@ -168,22 +168,6 @@ jQuery(document).ready(function($){
         resetScroll();
     }
 
-    // Hammer.js
-
-    var sections 		 = document.getElementById('cd-sections');
-    var verticalScroller = new Hammer(sections);
-
-    verticalScroller.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
-
-    verticalScroller.on('swipeup', function( e ) {
-    	nextSection();
-    });
-
-    verticalScroller.on('swipedown', function( e ) {
-    	prevSection();
-    });
-
-
     function unbindScroll(section, time) {
     	//if clicking on navigation - unbind scroll and animate using custom velocity animation
     	if( hijacking == 'off') {
@@ -428,6 +412,25 @@ jQuery(document).ready(function($){
 
 		return [translateY, scale, rotateX, opacity, boxShadowBlur];
 	}
+
+    // Hammer.js
+
+    var sections 		 = document.getElementById('cd-sections');
+    var verticalScroller = new Hammer(sections);
+
+    verticalScroller.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
+
+    verticalScroller.on('swipeup', function( e ) {
+    	nextSection();
+    });
+
+    verticalScroller.on('swipedown', function( e ) {
+    	prevSection();
+    });
+
+    // Parallax.js
+
+    $('#scene').parallax();
 
 });
 
