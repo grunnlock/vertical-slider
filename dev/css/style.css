@@ -37,9 +37,11 @@ body[data-hijacking="on"] {
 .cd-section {
   height: 100vh;
 }
+
 .cd-section-inside {
   height: inherit;
 }
+
 .cd-section:first-of-type > div {
   background-color: #2b334f;
 }
@@ -74,19 +76,19 @@ body[data-hijacking="on"] {
   background-size: cover;
 }
 [data-animation="parallax"] .cd-section:first-of-type > div, [data-animation="fixed"] .cd-section:first-of-type > div, [data-animation="opacity"] .cd-section:first-of-type > div {
-  background-image: url("../img/img-1.jpg");
+  background-image: url("../images/img-1.jpg");
 }
 [data-animation="parallax"] .cd-section:nth-of-type(2) > div, [data-animation="fixed"] .cd-section:nth-of-type(2) > div, [data-animation="opacity"] .cd-section:nth-of-type(2) > div {
-  background-image: url("../img/img-2.jpg");
+  background-image: url("../images/img-2.jpg");
 }
 [data-animation="parallax"] .cd-section:nth-of-type(3) > div, [data-animation="fixed"] .cd-section:nth-of-type(3) > div, [data-animation="opacity"] .cd-section:nth-of-type(3) > div {
-  background-image: url("../img/img-3.jpg");
+  background-image: url("../images/img-3.jpg");
 }
 [data-animation="parallax"] .cd-section:nth-of-type(4) > div, [data-animation="fixed"] .cd-section:nth-of-type(4) > div, [data-animation="opacity"] .cd-section:nth-of-type(4) > div {
-  background-image: url("../img/img-4.jpg");
+  background-image: url("../images/img-4.jpg");
 }
 [data-animation="parallax"] .cd-section:nth-of-type(5) > div, [data-animation="fixed"] .cd-section:nth-of-type(5) > div, [data-animation="opacity"] .cd-section:nth-of-type(5) > div {
-  background-image: url("../img/img-5.jpg");
+  background-image: url("../images/img-5.jpg");
 }
   .cd-section h2 {
     font-size: 4rem;
@@ -174,7 +176,7 @@ body[data-hijacking="on"] {
   overflow: hidden;
   text-indent: 100%;
   white-space: nowrap;
-  background: url(../img/cd-icon-arrow.svg) no-repeat center center;
+  background: url("../images/cd-icon-arrow.svg") no-repeat center center;
 }
 .cd-vertical-nav a.cd-prev {
   -webkit-transform: rotate(180deg);

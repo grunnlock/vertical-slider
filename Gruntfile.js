@@ -9,6 +9,7 @@ module.exports = function( grunt ) {
 		folders: {
 			js:     'js',
 			css:    'css',
+			less: 	'less',
 			sass:   'scss',
 			images: 'images'
 		}
@@ -31,8 +32,12 @@ module.exports = function( grunt ) {
             },
             all: {
             	files: [
-            		'<%= config.dev %>/**/*.{php,html,htm,xml,txt,htaccess,js,ico,png,jpg,jpeg,gif,json,css}'
+            		'<%= config.dev %>/**/*.{php,html,htm,xml,txt,htaccess,js,ico,png,jpg,jpeg,gif,json}'
             	],
+            },
+            less: {
+            	files: ['<%= config.dev %>/<%= config.folders.less %>/**/*.less'],
+       			tasks: ['newer:less']
             },
             sass: {
             	files: ['<%= config.dev %>/<%= config.folders.sass %>/**/*.scss'],
@@ -50,7 +55,7 @@ module.exports = function( grunt ) {
 			serve: {
 				files: [{
 					expand: true,
-					cwd:  '<%= config.dev %>/<%= config.folders.css %>',
+					cwd:  '<%= config.dev %>/<%= config.folders.less %>',
 					src:  ['*.less'],
 					dest: '<%= config.dev %>/<%= config.folders.css %>',
 					ext:  '.css'
@@ -74,7 +79,7 @@ module.exports = function( grunt ) {
 		// Run some tasks in parallel to speed up the processes
 	    concurrent: {
 	    	serve: [
-	    		'sass'
+	    		'less'
 	    	]
 	    },
 
@@ -82,7 +87,7 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask('serve', [
 		// 'jshint',
-		// 'concurrent:serve',
+		'concurrent:serve',
 		'watch'
 	]);
 
