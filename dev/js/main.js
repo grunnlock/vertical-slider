@@ -33,10 +33,8 @@ jQuery(document).ready(function($){
 		if( hijacking == 'on' ) {
 			initHijacking();
 			$(window).on('DOMMouseScroll mousewheel', scrollHijacking);
-		} else {
-			scrollAnimation();
-			$(window).on('scroll', scrollAnimation);
 		}
+
 		prevArrow.on('click', prevSection);
 		nextArrow.on('click', nextSection);
 
@@ -52,11 +50,6 @@ jQuery(document).ready(function($){
 		checkNavigation();
 
     }
-
-	function scrollAnimation(){
-		//normal scroll - use requestAnimationFrame (if defined) to optimize performance
-		(!window.requestAnimationFrame) ? animateSection() : window.requestAnimationFrame(animateSection);
-	}
 
 	function animateSection() {
 		var scrollTop = $(window).scrollTop(),
@@ -129,14 +122,12 @@ jQuery(document).ready(function($){
     	visibleSection = middleScroll ? visibleSection.next('.cd-section') : visibleSection;
 
     	var animationParams = selectAnimation(animationType, middleScroll, 'prev');
-    	unbindScroll(visibleSection.prev('.cd-section'), animationParams[3]);
 
         if( !animating && !visibleSection.is(":first-child") ) {
         	animating = true;
             visibleSection.removeClass('visible').children('div').velocity(animationParams[2], animationParams[3], animationParams[4])
             .end().prev('.cd-section').addClass('visible').children('div').velocity(animationParams[0] , animationParams[3], animationParams[4], function(){
             	animating = false;
-            	if( hijacking == 'off') $(window).on('scroll', scrollAnimation);
             });
 
             actual = actual - 1;
@@ -153,27 +144,17 @@ jQuery(document).ready(function($){
     		middleScroll = ( hijacking == 'off' && $(window).scrollTop() != visibleSection.offset().top) ? true : false;
 
     	var animationParams = selectAnimation(animationType, middleScroll, 'next');
-    	unbindScroll(visibleSection.next('.cd-section'), animationParams[3]);
 
         if(!animating && !visibleSection.is(":last-of-type") ) {
             animating = true;
             visibleSection.removeClass('visible').children('div').velocity(animationParams[1], animationParams[3], animationParams[4] )
             .end().next('.cd-section').addClass('visible').children('div').velocity(animationParams[0], animationParams[3], animationParams[4], function(){
             	animating = false;
-            	if( hijacking == 'off') $(window).on('scroll', scrollAnimation);
             });
 
             actual = actual +1;
         }
         resetScroll();
-    }
-
-    function unbindScroll(section, time) {
-    	//if clicking on navigation - unbind scroll and animate using custom velocity animation
-    	if( hijacking == 'off') {
-    		$(window).off('scroll', scrollAnimation);
-    		( animationType == 'catch') ? $('body, html').scrollTop(section.offset().top) : section.velocity("scroll", { duration: time });
-    	}
     }
 
     function resetScroll() {
@@ -430,7 +411,7 @@ jQuery(document).ready(function($){
 
     // Parallax.js
 
-    $('#scene').parallax();
+    $('#scene1, #scene2').parallax();
 
 });
 
