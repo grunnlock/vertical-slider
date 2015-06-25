@@ -18,31 +18,31 @@ a {
   text-decoration: none;
   color: #267481;
 }
-.cd-section h2 {
+.vs-section h2 {
   font-size: 4rem;
   font-weight: 300;
   line-height: 100vh;
   text-align: center;
 }
-.cd-section:nth-of-type(1) > .cd-section-inside {
+.vs-section:nth-of-type(1) > .vs-section-inside {
   background-image: url('../images/img-1.jpg');
 }
-.cd-section:nth-of-type(2) > .cd-section-inside {
+.vs-section:nth-of-type(2) > .vs-section-inside {
   background-image: url('../images/img-2.jpg');
 }
-.cd-section:nth-of-type(3) > .cd-section-inside {
+.vs-section:nth-of-type(3) > .vs-section-inside {
   background-image: url('../images/img-3.jpg');
 }
-.cd-section:nth-of-type(4) > .cd-section-inside {
+.vs-section:nth-of-type(4) > .vs-section-inside {
   background-image: url('../images/img-4.jpg');
 }
-.cd-section:nth-of-type(5) > .cd-section-inside {
+.vs-section:nth-of-type(5) > .vs-section-inside {
   background-image: url('../images/img-5.jpg');
 }
 body {
   overflow: hidden;
 }
-.cd-section {
+.vs-section {
   position: absolute;
   top: 0;
   left: 0;
@@ -51,7 +51,7 @@ body {
   height: 100vh;
   opacity: 0;
 }
-.cd-section-inside {
+.vs-section-inside {
   position: absolute;
   position: fixed;
   top: 0;
@@ -74,7 +74,7 @@ body {
   -o-transform: translateZ(0);
   transform: translateZ(0);
 }
-.cd-vertical-nav {
+.vs-vertical-nav {
   position: fixed;
   z-index: 1;
   top: 50%;
@@ -87,7 +87,7 @@ body {
   -o-transform: translateY(-50%);
   transform: translateY(-50%);
 }
-.cd-vertical-nav a {
+.vs-vertical-nav a {
   display: block;
   overflow: hidden;
   width: 40px;
@@ -96,24 +96,11 @@ body {
   text-indent: 100%;
   background: url('../images/cd-icon-arrow.svg') no-repeat center center;
 }
-.cd-vertical-nav a.cd-prev {
+.vs-vertical-nav a.vs-prev {
   margin-bottom: 10px;
   -webkit-transform: rotate(180deg);
   -moz-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   -o-transform: rotate(180deg);
   transform: rotate(180deg);
-}
-.container {
-  position: relative;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-}
-.scene {
-  margin: 0;
-  padding: 0;
-}
-.layer img {
-  max-width: 100%;
 }

@@ -1,39 +1,43 @@
 jQuery( document ).ready(function( $ ) {
 
 	// General variables
-	var	delta 		    = 0,
-        scrollThreshold = 1,
-        actual 			= 1,
-        animating 		= false;
+	var	delta 		    = 0;
+    var scrollThreshold = 1;
+    var actual 			= 1;
+    var animating 		= false;
 
     // DOM elements
-    var sectionsAvailable = $('.cd-section');
+    var sectionsContainer = $('.vs-slider');
+    var sections          = $('.vs-section');
+    var sectionsAvailable = sections.toArray();
+    var sectionsCount     = sectionsAvailable.length;
 
-	// Sections styles
-	var currentSection   = sectionsAvailable.filter('.active'),
-        sectionsCount    = sectionsAvailable.length,
-		topSection 		 = currentSection.prevAll('.cd-section'),
-		bottomSection 	 = currentSection.nextAll('.cd-section'),
-		animationParams  = {
-			visible: 'translateNone',
-			top:     'translateUp.half',
-			bottom:  'translateDown',
-			easing:  'easeInCubic',
-			duration: 800
-		};
+	// Initialise styles
+	var currentSection = sections.filter('.active');
+	var	topSection 	   = currentSection.prevAll('.vs-section');
+	var	bottomSection  = currentSection.nextAll('.vs-section');
+
+    // Animations settings
+	var	animationsSettings  = {
+		visible: 'translateNone',
+		top:     'translateUp.half',
+		bottom:  'translateDown',
+		easing:  'easeInCubic',
+		duration: 800
+	};
 
 	// Initialise the vertical scroller
     function init() {
 
         // Initialise the style of the sections for the first animation
-		currentSection.children('.cd-section-inside').velocity(animationParams.visible, 1, function() {
+		currentSection.children('.vs-section-inside').velocity(animationsSettings.visible, 1, function() {
 			currentSection.css('opacity', 1);
 	    	topSection.css('opacity', 1);
 	    	bottomSection.css('opacity', 1);
 		});
 
-        topSection.children('.cd-section-inside').velocity( animationParams.top, 0 );
-        bottomSection.children('.cd-section-inside').velocity( animationParams.bottom, 0 );
+        topSection.children('.vs-section-inside').velocity( animationsSettings.top, 0 );
+        bottomSection.children('.vs-section-inside').velocity( animationsSettings.bottom, 0 );
 
         // Bind events
 
@@ -76,18 +80,17 @@ jQuery( document ).ready(function( $ ) {
 		if( Modernizr.touch ) {
 
 			// Hammer.js
-		    var sections 		 = document.getElementById('cd-sections');
-		    var verticalScroller = new Hammer( sections );
+		    var hammerVS = new Hammer( sectionsContainer[0] );
 
-		    verticalScroller.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
+		    hammerVS.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
 
             // Go to the next section on swipe up
-		    verticalScroller.on('swipeup', function( e ) {
+		    hammerVS.on('swipeup', function( e ) {
 		    	nextSection();
 		    });
 
             // Go to the previous section on swipe down
-		    verticalScroller.on('swipedown', function( e ) {
+		    hammerVS.on('swipedown', function( e ) {
 		    	prevSection();
 		    });
 
@@ -101,23 +104,20 @@ jQuery( document ).ready(function( $ ) {
             event.preventDefault();
         }
 
-    	var currentSection = sectionsAvailable.filter('.active'),
-    		middleScroll   = false;
-    	// currentSection = middleScroll ? currentSection.next('.cd-section') : currentSection;
+    	var currentSection = sections.filter('.active');
 
         if( !animating && !currentSection.is(":first-child") ) {
 
         	animating = true;
 
-            currentSection.removeClass('active').children('div').velocity(animationParams.bottom, animationParams.easing, animationParams.duration)
-                .end().prev('.cd-section').addClass('active').children('div').velocity(animationParams.visible, animationParams.easing, animationParams.duration, function(){
+            currentSection.removeClass('active').children('div').velocity(animationsSettings.bottom, animationsSettings.easing, animationsSettings.duration)
+                .end().prev('.vs-section').addClass('active').children('div').velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function(){
                 	animating = false;
                 });
 
             actual = actual - 1;
 
         }
-        // resetScroll();
     }
 
     function nextSection( event ) {
@@ -126,23 +126,19 @@ jQuery( document ).ready(function( $ ) {
             event.preventDefault();
         }
 
-        var currentSection = sectionsAvailable.filter('.active');
+        var currentSection = sections.filter('.active');
 
         if(!animating && !currentSection.is(':last-of-type') ) {
+
             animating = true;
-            currentSection.removeClass('active').children('div').velocity(animationParams.top, animationParams.easing, animationParams.duration )
-            .end().next('.cd-section').addClass('active').children('div').velocity(animationParams.visible, animationParams.easing, animationParams.duration, function() {
+            currentSection.removeClass('active').children('div').velocity(animationsSettings.top, animationsSettings.easing, animationsSettings.duration )
+            .end().next('.vs-section').addClass('active').children('div').velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function() {
             	animating = false;
             });
 
             actual = actual + 1;
         }
-        // resetScroll();
     }
-
-    // function resetScroll() {
-    //     delta = 0;
-    // }
 
     // Vertical scroller initialisation
     init();
