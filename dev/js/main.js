@@ -57,8 +57,7 @@ jQuery( document ).ready(function( $ ) {
 
     function moveTo( sectionIndex ) {
 
-        var topSection;
-        var bottomSeciton;
+        var nextSection;
         var animation;
 
         // Test the slider is not already moving and the requested section is not the current one
@@ -79,13 +78,11 @@ jQuery( document ).ready(function( $ ) {
                 }
 
                 // Actual animation
-                currentSection
-                    .removeClass('active')
-                    .children('.vs-section-inside').velocity( animation, animationsSettings.easing, animationsSettings.duration ).end()
+                currentSection.removeClass('active');
+                currentSection.children('.vs-section-inside').velocity( animation, animationsSettings.easing, animationsSettings.duration ).end()
 
-                nextSection
-                    .addClass('active')
-                    .children('.vs-section-inside').velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function() {
+                nextSection.addClass('active');
+                nextSection.children('.vs-section-inside').velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function() {
                         // Animations stopped
                         animating      = false;
                         // Update current section variable
@@ -171,18 +168,30 @@ jQuery( document ).ready(function( $ ) {
         if( Modernizr.touch ) {
 
             // Hammer.js
+
+            // Swipe gesture
             var hammerVS = new Hammer( sectionsContainer[0] );
 
             hammerVS.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
 
-            // Go to the next section on swipe up
-            hammerVS.on('swipeup', function( e ) {
-                next();
+            hammerVS.on('swipeup', function() {   next(); });
+            hammerVS.on('swipedown', function() { prev(); });
+
+            // Navigation arrows
+            var hammerVSprev = new Hammer( $('.vs-prev')[0] );
+            var hammerVSnext = new Hammer( $('.vs-next')[0] );
+
+            hammerVSprev.on('tap', function() { prev(); });
+            hammerVSnext.on('tap', function() { next(); });
+
+        } else {
+
+            $('.vs-prev').on('click', function() {
+                prev();
             });
 
-            // Go to the previous section on swipe down
-            hammerVS.on('swipedown', function( e ) {
-                prev();
+            $('.vs-next').on('click', function() {
+                next();
             });
 
         }
@@ -216,7 +225,7 @@ $.Velocity
     .RegisterEffect('translateNone', {
     	defaultDuration: 1,
         calls: [
-            [ { translateY: '0', opacity: '1', scale: '1', rotateX: '0', boxShadowBlur: '0' }, 1 ]
+            [ { translateY: '0', opacity: '1' }, 1 ]
         ]
     });
 
