@@ -46,47 +46,13 @@ jQuery( document ).ready(function( $ ) {
     }
 
     function prev() {
-
         // All tests will be done in the moveTo function
         moveTo( currentSection.index() - 1 );
-
-        // if( !animating && !currentSection.is(':first-child') ) {
-
-        // 	animating = true;
-
-        //     currentSection
-        //         .removeClass('active')
-        //         .children('.vs-section-inside').velocity(animationsSettings.bottom, animationsSettings.easing, animationsSettings.duration).end()
-        //         .prev('.vs-section').addClass('active')
-        //         .children('.vs-section-inside').velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function() {
-        //         	animating = false;
-        //             currentSection = sections.filter('.active');
-        //         });
-
-        // }
-
     }
 
     function next() {
-
         // All tests will be done in the moveTo function
         moveTo( currentSection.index() + 1 );
-
-        // if( !animating && !currentSection.is(':last-of-type') ) {
-
-        //     animating = true;
-
-            // currentSection
-            //     .removeClass('active')
-            //     .children('.vs-section-inside').velocity(animationsSettings.top, animationsSettings.easing, animationsSettings.duration ).end()
-            //     .next('.vs-section').addClass('active')
-            //     .children('.vs-section-inside').velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function() {
-            //     	animating = false;
-            //         currentSection = sections.filter('.active');
-            //     });
-
-        // }
-
     }
 
     function moveTo( sectionIndex ) {
@@ -160,7 +126,7 @@ jQuery( document ).ready(function( $ ) {
         // Scroll with mousewheel actions
         $( window ).on('DOMMouseScroll mousewheel', function( event ) {
 
-            // on mouse scroll - check if animate section
+            // Check the scroll direction
             if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
 
                 delta--;
@@ -183,6 +149,9 @@ jQuery( document ).ready(function( $ ) {
 
             }
 
+            // Reset delta
+            delta = 0;
+
             return false;
 
         });
@@ -190,9 +159,9 @@ jQuery( document ).ready(function( $ ) {
         // Keyboard arrows actions
         $( document ).on('keyup', function( event ) {
 
-            if( event.which === '40' && !nextArrow.hasClass('active') ) {
+            if( event.which == '40' ) {
                 next();
-            } else if( event.which === '38' && ( !prevArrow.hasClass('active') || ( prevArrow.hasClass('active') && $( window ).scrollTop() !== sections.eq(0).offset().top ) ) ) {
+            } else if( event.which == '38' ) {
                 prev();
             }
 
@@ -259,111 +228,3 @@ $.Velocity
             [ { translateY: '-50%' }, 1 ]
         ]
     });
-
-// //scale down
-// $.Velocity
-//     .RegisterEffect("scaleDown", {
-//     	defaultDuration: 1,
-//         calls: [
-//             [{ opacity: '0', scale: '0.7', boxShadowBlur: '40px' }, 1]
-//         ]
-//     });
-// //rotation
-// $.Velocity
-//     .RegisterEffect("rotation", {
-//     	defaultDuration: 1,
-//         calls: [
-//             [ { opacity: '0', rotateX: '90', translateY: '-100%'}, 1]
-//         ]
-//     });
-// $.Velocity
-//     .RegisterEffect("rotation.scroll", {
-//     	defaultDuration: 1,
-//         calls: [
-//             [ { opacity: '0', rotateX: '90', translateY: '0'}, 1]
-//         ]
-//     });
-// //gallery
-// $.Velocity
-//     .RegisterEffect("scaleDown.moveUp", {
-//     	defaultDuration: 1,
-//         calls: [
-//         	[ { translateY: '-10%', scale: '0.9', boxShadowBlur: '40px'}, 0.20 ],
-//         	[ { translateY: '-100%' }, 0.60 ],
-//         	[ { translateY: '-100%', scale: '1', boxShadowBlur: '0' }, 0.20 ]
-//         ]
-//     });
-// $.Velocity
-//     .RegisterEffect("scaleDown.moveUp.scroll", {
-//     	defaultDuration: 1,
-//         calls: [
-//         	[ { translateY: '-100%', scale: '0.9', boxShadowBlur: '40px' }, 0.60 ],
-//         	[ { translateY: '-100%', scale: '1', boxShadowBlur: '0' }, 0.40 ]
-//         ]
-//     });
-// $.Velocity
-//     .RegisterEffect("scaleUp.moveUp", {
-//     	defaultDuration: 1,
-//         calls: [
-//         	[ { translateY: '90%', scale: '0.9', boxShadowBlur: '40px' }, 0.20 ],
-//         	[ { translateY: '0%' }, 0.60 ],
-//         	[ { translateY: '0%', scale: '1', boxShadowBlur: '0'}, 0.20 ]
-//         ]
-//     });
-// $.Velocity
-//     .RegisterEffect("scaleUp.moveUp.scroll", {
-//     	defaultDuration: 1,
-//         calls: [
-//         	[ { translateY: '0%', scale: '0.9' , boxShadowBlur: '40px' }, 0.60 ],
-//         	[ { translateY: '0%', scale: '1', boxShadowBlur: '0'}, 0.40 ]
-//         ]
-//     });
-// $.Velocity
-//     .RegisterEffect("scaleDown.moveDown", {
-//     	defaultDuration: 1,
-//         calls: [
-//         	[ { translateY: '10%', scale: '0.9', boxShadowBlur: '40px'}, 0.20 ],
-//         	[ { translateY: '100%' }, 0.60 ],
-//         	[ { translateY: '100%', scale: '1', boxShadowBlur: '0'}, 0.20 ]
-//         ]
-//     });
-// $.Velocity
-//     .RegisterEffect("scaleDown.moveDown.scroll", {
-//     	defaultDuration: 1,
-//         calls: [
-//         	[ { translateY: '100%', scale: '0.9', boxShadowBlur: '40px' }, 0.60 ],
-//         	[ { translateY: '100%', scale: '1', boxShadowBlur: '0' }, 0.40 ]
-//         ]
-//     });
-// $.Velocity
-//     .RegisterEffect("scaleUp.moveDown", {
-//     	defaultDuration: 1,
-//         calls: [
-//         	[ { translateY: '-90%', scale: '0.9', boxShadowBlur: '40px' }, 0.20 ],
-//         	[ { translateY: '0%' }, 0.60 ],
-//         	[ { translateY: '0%', scale: '1', boxShadowBlur: '0'}, 0.20 ]
-//         ]
-//     });
-// //catch up
-// $.Velocity
-//     .RegisterEffect("translateUp.delay", {
-//     	defaultDuration: 1,
-//         calls: [
-//             [ { translateY: '0%'}, 0.8, { delay: 100 }],
-//         ]
-//     });
-// //opacity
-// $.Velocity
-//     .RegisterEffect("hide.scaleUp", {
-//     	defaultDuration: 1,
-//         calls: [
-//             [ { opacity: '0', scale: '1.2'}, 1 ]
-//         ]
-//     });
-// $.Velocity
-//     .RegisterEffect("hide.scaleDown", {
-//     	defaultDuration: 1,
-//         calls: [
-//             [ { opacity: '0', scale: '0.8'}, 1 ]
-//         ]
-//     });
