@@ -1,67 +1,48 @@
 jQuery( document ).ready(function( $ ) {
-
-	// General variables
+	// Variables
 	var	delta 		    = 0,
-        scrollThreshold = 1,
+        scrollThreshold = 5,
         actual 			= 1,
         animating 		= false;
 
     // DOM elements
     var sectionsAvailable = $('.cd-section');
 
-	// Sections styles
+	// Initialize section style - scrollhijacking
 	var currentSection   = sectionsAvailable.filter('.active'),
-        sectionsCount    = sectionsAvailable.length,
 		topSection 		 = currentSection.prevAll('.cd-section'),
 		bottomSection 	 = currentSection.nextAll('.cd-section'),
 		animationParams  = {
 			visible: 'translateNone',
-			top:     'translateUp.half',
-			bottom:  'translateDown',
-			easing:  'easeInCubic',
+			top: 'translateUp.half',
+			bottom: 'translateDown',
+			easing: 'easeInCubic',
 			duration: 800
 		};
 
-	// Initialise the vertical scroller
-    function init() {
+	// Init events
+	bindEvents();
 
-        // Initialise the style of the sections for the first animation
-		currentSection.children('.cd-section-inside').velocity(animationParams.visible, 1, function() {
+	// // Rebind events on resize
+	// $( window ).on('resize', function() {
+	// 	bindEvents();
+	// });
+
+    function bindEvents() {
+
+		currentSection.children('div').velocity(animationParams.visible, 1, function() {
 			currentSection.css('opacity', 1);
 	    	topSection.css('opacity', 1);
 	    	bottomSection.css('opacity', 1);
 		});
 
-        topSection.children('.cd-section-inside').velocity( animationParams.top, 0 );
-        bottomSection.children('.cd-section-inside').velocity( animationParams.bottom, 0 );
+        topSection.children('div').velocity( animationParams.top, 0 );
+        bottomSection.children('div').velocity( animationParams.bottom, 0 );
 
         // Bind events
 
         // Scroll with mousewheel actions
-		$( window ).on( 'DOMMouseScroll mousewheel', function( event ) {
-
-            // on mouse scroll - check if animate section
-            if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
-                delta--;
-
-                if( Math.abs( delta ) >= scrollThreshold ) {
-                    prevSection();
-                } else {
-                    return false;
-                }
-            } else {
-                delta++;
-
-                if( delta >= scrollThreshold ) {
-                    nextSection();
-                } else {
-                    return false;
-                }
-            }
-
-            return false;
-
-        });
+		$( window ).on( 'DOMMouseScroll mousewheel', scrollHijacking );
 
 		// Keyboard arrows actions
 		$( document ).on('keyup', function( event ) {
@@ -81,12 +62,10 @@ jQuery( document ).ready(function( $ ) {
 
 		    verticalScroller.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
 
-            // Go to the next section on swipe up
 		    verticalScroller.on('swipeup', function( e ) {
 		    	nextSection();
 		    });
 
-            // Go to the previous section on swipe down
 		    verticalScroller.on('swipedown', function( e ) {
 		    	prevSection();
 		    });
@@ -95,36 +74,52 @@ jQuery( document ).ready(function( $ ) {
 
     }
 
-    function prevSection( event ) {
+	function scrollHijacking( event ) {
+		// on mouse scroll - check if animate section
+        if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
+            delta--;
 
-    	if( typeof event !== 'undefined' ) {
-            event.preventDefault();
+            if( Math.abs( delta ) >= scrollThreshold ) {
+            	prevSection();
+        	} else {
+        		return false;
+        	}
+        } else {
+            delta++;
+
+            if( delta >= scrollThreshold ) {
+            	nextSection();
+        	} else {
+        		return false;
+        	}
         }
+
+        return false;
+    }
+
+    function prevSection( event ) {
+    	//go to previous section
+    	typeof event !== 'undefined' && event.preventDefault();
 
     	var currentSection = sectionsAvailable.filter('.active'),
     		middleScroll   = false;
     	// currentSection = middleScroll ? currentSection.next('.cd-section') : currentSection;
 
         if( !animating && !currentSection.is(":first-child") ) {
-
         	animating = true;
-
             currentSection.removeClass('active').children('div').velocity(animationParams.bottom, animationParams.easing, animationParams.duration)
-                .end().prev('.cd-section').addClass('active').children('div').velocity(animationParams.visible, animationParams.easing, animationParams.duration, function(){
-                	animating = false;
-                });
+            .end().prev('.cd-section').addClass('active').children('div').velocity(animationParams.visible, animationParams.easing, animationParams.duration, function(){
+            	animating = false;
+            });
 
             actual = actual - 1;
-
         }
         // resetScroll();
     }
 
     function nextSection( event ) {
-
-    	if( typeof event !== 'undefined' ) {
-            event.preventDefault();
-        }
+    	//go to next section
+    	typeof event !== 'undefined' && event.preventDefault();
 
         var currentSection = sectionsAvailable.filter('.active');
 
@@ -144,8 +139,9 @@ jQuery( document ).ready(function( $ ) {
     //     delta = 0;
     // }
 
-    // Vertical scroller initialisation
-    init();
+    // Parallax.js
+
+    $('#scene1, #scene2').parallax();
 
 });
 
