@@ -1,22 +1,20 @@
 jQuery( document ).ready(function( $ ) {
-	//variables
-	var hijacking 	    = 'on',
-		animationType   = 'parallax',
-		delta 		    = 0,
+	// Variables
+	var	delta 		    = 0,
         scrollThreshold = 5,
         actual 			= 1,
         animating 		= false;
 
-    //DOM elements
+    // DOM elements
     var sectionsAvailable = $('.cd-section'),
     	verticalNav 	  = $('.cd-vertical-nav'),
     	prevArrow 		  = verticalNav.find('a.cd-prev'),
     	nextArrow 		  = verticalNav.find('a.cd-next');
 
 	// Initialize section style - scrollhijacking
-	var visibleSection   = sectionsAvailable.filter('.visible'),
-		topSection 		 = visibleSection.prevAll('.cd-section'),
-		bottomSection 	 = visibleSection.nextAll('.cd-section'),
+	var currentSection   = sectionsAvailable.filter('.visible'),
+		topSection 		 = currentSection.prevAll('.cd-section'),
+		bottomSection 	 = currentSection.nextAll('.cd-section'),
 		animationParams  = {
 			visible: 'translateNone',
 			top: 'translateUp.half',
@@ -25,19 +23,18 @@ jQuery( document ).ready(function( $ ) {
 			duration: 800
 		};
 
-		console.log( animationParams );
-
 	// Init events
 	bindEvents();
 
-	$( window ).on('resize', function() {
-		bindEvents();
-	});
+	// // Rebind events on resize
+	// $( window ).on('resize', function() {
+	// 	bindEvents();
+	// });
 
     function bindEvents() {
 
-		visibleSection.children('div').velocity(animationParams.visible, 1, function() {
-			visibleSection.css('opacity', 1);
+		currentSection.children('div').velocity(animationParams.visible, 1, function() {
+			currentSection.css('opacity', 1);
 	    	topSection.css('opacity', 1);
 	    	bottomSection.css('opacity', 1);
 		});
@@ -111,45 +108,36 @@ jQuery( document ).ready(function( $ ) {
     	//go to previous section
     	typeof event !== 'undefined' && event.preventDefault();
 
-    	var visibleSection = sectionsAvailable.filter('.visible'),
+    	var currentSection = sectionsAvailable.filter('.visible'),
     		middleScroll   = false;
-    	// visibleSection = middleScroll ? visibleSection.next('.cd-section') : visibleSection;
+    	// currentSection = middleScroll ? currentSection.next('.cd-section') : currentSection;
 
-        if( !animating && !visibleSection.is(":first-child") ) {
+        if( !animating && !currentSection.is(":first-child") ) {
         	animating = true;
-            visibleSection.removeClass('visible').children('div').velocity(animationParams.bottom, animationParams.easing, animationParams.duration)
-            .end().prev('.cd-section').addClass('visible').children('div').velocity(animationParams.visible , animationParams.easing, animationParams.duration, function(){
+            currentSection.removeClass('visible').children('div').velocity(animationParams.bottom, animationParams.easing, animationParams.duration)
+            .end().prev('.cd-section').addClass('visible').children('div').velocity(animationParams.visible, animationParams.easing, animationParams.duration, function(){
             	animating = false;
             });
 
             actual = actual - 1;
         }
         // resetScroll();
-
-		animationParams  = {
-			visible: 'translateNone',
-			top: 'translateUp.half',
-			bottom: 'translateDown',
-			easing: 'easeInCubic',
-			duration: 800
-		};
     }
 
     function nextSection( event ) {
     	//go to next section
     	typeof event !== 'undefined' && event.preventDefault();
 
-        var visibleSection = sectionsAvailable.filter('.visible'),
-    		middleScroll = ( hijacking == 'off' && $(window).scrollTop() != visibleSection.offset().top) ? true : false;
+        var currentSection = sectionsAvailable.filter('.visible');
 
-        if(!animating && !visibleSection.is(':last-of-type') ) {
+        if(!animating && !currentSection.is(':last-of-type') ) {
             animating = true;
-            visibleSection.removeClass('visible').children('div').velocity(animationParams.top, animationParams.easing, animationParams.duration )
+            currentSection.removeClass('visible').children('div').velocity(animationParams.top, animationParams.easing, animationParams.duration )
             .end().next('.cd-section').addClass('visible').children('div').velocity(animationParams.visible, animationParams.easing, animationParams.duration, function() {
             	animating = false;
             });
 
-            actual = actual +1;
+            actual = actual + 1;
         }
         // resetScroll();
     }
@@ -157,16 +145,6 @@ jQuery( document ).ready(function( $ ) {
     // function resetScroll() {
     //     delta = 0;
     // }
-
-	function selectAnimation( animationName, middleScroll, direction ) {
-		var animationVisible = 'translateNone',
-			animationTop 	 = 'translateUp.half',
-			animationBottom  = 'translateDown',
-			easing 			 = 'easeInCubic',
-			animDuration 	 = 800;
-
-		return [animationVisible, animationTop, animationBottom, animDuration, easing];
-	}
 
     // Parallax.js
 
@@ -180,7 +158,7 @@ $.Velocity
     .RegisterEffect('translateUp', {
     	defaultDuration: 1,
         calls: [
-            [{ translateY: '-100%'}, 1]
+            [ { translateY: '-100%' }, 1 ]
         ]
     });
 
@@ -188,7 +166,7 @@ $.Velocity
     .RegisterEffect('translateDown', {
     	defaultDuration: 1,
         calls: [
-            [{ translateY: '100%'}, 1]
+            [ { translateY: '100%' }, 1 ]
         ]
     });
 
@@ -196,7 +174,7 @@ $.Velocity
     .RegisterEffect('translateNone', {
     	defaultDuration: 1,
         calls: [
-            [{ translateY: '0', opacity: '1', scale: '1', rotateX: '0', boxShadowBlur: '0'}, 1]
+            [ { translateY: '0', opacity: '1', scale: '1', rotateX: '0', boxShadowBlur: '0' }, 1 ]
         ]
     });
 
@@ -205,7 +183,7 @@ $.Velocity
     .RegisterEffect('translateUp.half', {
     	defaultDuration: 1,
         calls: [
-            [{ translateY: '-50%'}, 1]
+            [ { translateY: '-50%' }, 1 ]
         ]
     });
 
