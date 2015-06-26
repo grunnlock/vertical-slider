@@ -1,8 +1,6 @@
 @import '_variables.less';
 @import '_mixins.less';
 
-// Optional style
-
 *,
 *::after,
 *::before {
@@ -82,30 +80,4 @@ a {
    margin-bottom: 10px;
 
    .transform( rotate(180deg) );
-}
-
-// Mandatory style
-
-body {
-   overflow: hidden;
-}
-
-.vs-slider {
-   position: relative;
-}
-
-.vs-section {
-   position: absolute;
-   top: 0;
-   left: 0;
-   visibility: visible;
-   overflow: hidden;
-   width: 100%;
-   height: 300px;
-   opacity: 0;
-   background-repeat: no-repeat;
-   background-position: center center;
-
-   .background-size( cover );
-   .enable-cpu();
 }
