@@ -24,21 +24,27 @@ jQuery( document ).ready(function( $ ) {
     // Initialise the vertical scroller
     function init() {
 
-        // Initialise the style of the sections for the first animation
-        currentSection.children('.vs-section-inside').velocity( animationsSettings.visible, 1 );
+        // Define the height of sections
+        sections.height( $( window ).height() );
 
         // Current section
-        currentSection.css('opacity', 1);
+        currentSection
+            .css('opacity', 1)
+            .children('.vs-section-inside').velocity( animationsSettings.visible, 0 );
 
         // Bottom section
-        currentSection.prevAll('.vs-section')
-            .css('opacity', 1)
-            .children('.vs-section-inside').velocity( animationsSettings.top, 0 );
+        if( currentSection.prevAll('.vs-section').index() > -1 ) {
+            currentSection.prevAll('.vs-section')
+                .css('opacity', 1)
+                .children('.vs-section-inside').velocity( animationsSettings.top, 0 );
+        }
 
         // Top section
-        currentSection.nextAll('.vs-section')
-            .css('opacity', 1)
-            .children('.vs-section-inside').velocity( animationsSettings.bottom, 0 );
+        if( currentSection.nextAll('.vs-section').index() > -1 ) {
+            currentSection.nextAll('.vs-section')
+                .css('opacity', 1)
+                .children('.vs-section-inside').velocity( animationsSettings.bottom, 0 );
+        }
 
         // Bind events
         bindEvents();
@@ -79,7 +85,7 @@ jQuery( document ).ready(function( $ ) {
 
                 // Actual animation
                 currentSection.removeClass('active');
-                currentSection.children('.vs-section-inside').velocity( animation, animationsSettings.easing, animationsSettings.duration ).end()
+                currentSection.children('.vs-section-inside').velocity( animation, animationsSettings.easing, animationsSettings.duration ).end();
 
                 nextSection.addClass('active');
                 nextSection.children('.vs-section-inside').velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function() {
@@ -88,6 +94,14 @@ jQuery( document ).ready(function( $ ) {
                         // Update current section variable
                         currentSection = sections.filter('.active');
                     });
+
+                // currentSection.removeClass('active');
+                // nextSection.addClass('active');
+
+                // // Animations stopped
+                // animating      = false;
+                // // Update current section variable
+                // currentSection = sections.filter('.active');
 
 
             } else {
@@ -209,7 +223,7 @@ $.Velocity
     .RegisterEffect('translateUp', {
     	defaultDuration: 1,
         calls: [
-            [ { translateY: '-100%' }, 1 ]
+            [ { translateZ: 0, translateY: '-100%' }, 1 ]
         ]
     });
 
@@ -217,7 +231,7 @@ $.Velocity
     .RegisterEffect('translateDown', {
     	defaultDuration: 1,
         calls: [
-            [ { translateY: '100%' }, 1 ]
+            [ { translateZ: 0, translateY: '100%' }, 1 ]
         ]
     });
 
@@ -225,7 +239,7 @@ $.Velocity
     .RegisterEffect('translateNone', {
     	defaultDuration: 1,
         calls: [
-            [ { translateY: '0', opacity: '1' }, 1 ]
+            [ { translateZ: 0, translateY: '0', opacity: '1' }, 1 ]
         ]
     });
 
@@ -234,6 +248,6 @@ $.Velocity
     .RegisterEffect('translateUp.half', {
     	defaultDuration: 1,
         calls: [
-            [ { translateY: '-50%' }, 1 ]
+            [ { translateZ: 0, translateY: '-50%' }, 1 ]
         ]
     });
