@@ -13,7 +13,7 @@ jQuery( document ).ready(function( $ ) {
 	var currentSection = sections.filter('.active');
 
     // Animations settings
-	var	animationsSettings  = {
+	var	animationsSettings = {
 		visible: 'translateNone',
 		top:     'translateUp.half',
 		bottom:  'translateDown',
@@ -27,21 +27,26 @@ jQuery( document ).ready(function( $ ) {
         // Define the height of sections
         sections.height( $( window ).height() );
 
-        // Current section
-        currentSection.css('opacity', 1).velocity( 'translateNone', 0 );
+        // Add a 100ms time out to avoid an issue where the first section swipe effect is lagging
+        setTimeout(function() {
 
-        // Bottom section
-        if( currentSection.prevAll('.vs-section').index() > -1 ) {
-            currentSection.prevAll('.vs-section').css('opacity', 1).velocity( 'translateUp.half', 0 );
-        }
+            // Current section
+            currentSection.velocity( animationsSettings.visible, 0 );
 
-        // Top section
-        if( currentSection.nextAll('.vs-section').index() > -1 ) {
-            currentSection.nextAll('.vs-section').css('opacity', 1).velocity( 'translateDown', 0 );
-        }
+            // Bottom section
+            if( currentSection.prevAll('.vs-section').index() > -1 ) {
+                currentSection.prevAll('.vs-section').css('opacity', 1).velocity( animationsSettings.top, 0 );
+            }
 
-        // Bind events
-        bindEvents();
+            // Top section
+            if( currentSection.nextAll('.vs-section').index() > -1 ) {
+                currentSection.nextAll('.vs-section').css('opacity', 1).velocity( animationsSettings.bottom, 0 );
+            }
+
+            // Bind events
+            bindEvents();
+
+        }, 100);
 
     }
 
@@ -78,9 +83,9 @@ jQuery( document ).ready(function( $ ) {
                 }
 
                 // Actual animation
-                currentSection.removeClass('active').velocity( animation, animationsSettings.easing, animationsSettings.duration ).end();
+                currentSection.removeClass('active').velocity( animation, animationsSettings.easing, animationsSettings.duration );
 
-                nextSection.addClass('active').velocity('translateNone', animationsSettings.easing, animationsSettings.duration, function() {
+                nextSection.addClass('active').velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function() {
                     // Animations stopped
                     animating      = false;
                     // Update current section variable
@@ -92,13 +97,9 @@ jQuery( document ).ready(function( $ ) {
                 // At this stage the requested section is either after the last one or before the first one
 
                 if( sectionIndex <= -1 ) { // Requested section is before the first one
-
-                    currentSection.velocity( 'bounceDown', animationsSettings.easing, 400 ).end();
-
+                    currentSection.velocity( 'bounceDown', animationsSettings.easing, 400 );
                 } else if( sectionIndex >= sections.length ) { // Requested section is after the last one
-
-                    currentSection.velocity( 'bounceUp', animationsSettings.easing, 400 ).end();
-
+                    currentSection.velocity( 'bounceUp', animationsSettings.easing, 400 );
                 }
 
                 // Animations stopped
@@ -107,15 +108,18 @@ jQuery( document ).ready(function( $ ) {
             }
 
         } else {
-
             // Requested section is the current one
             return false;
-
         }
 
     }
 
     function bindEvents() {
+
+        // Resize sections on window resize
+        $( window ).on('resize', function() {
+            sections.height( $( window ).height() );
+        });
 
         // Scroll with mousewheel actions
         $( window ).on('DOMMouseScroll mousewheel', function( event ) {
@@ -183,13 +187,8 @@ jQuery( document ).ready(function( $ ) {
 
         } else {
 
-            $('.vs-prev').on('click', function() {
-                prev();
-            });
-
-            $('.vs-next').on('click', function() {
-                next();
-            });
+            $('.vs-prev').on('click', function() { prev(); });
+            $('.vs-next').on('click', function() { next(); });
 
         }
 
@@ -204,7 +203,7 @@ jQuery( document ).ready(function( $ ) {
 $.Velocity.RegisterEffect('translateNone', {
     defaultDuration: 1,
     calls: [
-        [ { translateZ: 0, translateY: '0', opacity: '1' }, 1 ]
+        [ { translateZ: 0, translateY: '0%', opacity: 1 }, 1 ]
     ]
 });
 
@@ -212,13 +211,6 @@ $.Velocity.RegisterEffect('translateDown', {
     defaultDuration: 1,
     calls: [
         [ { translateZ: 0, translateY: '100%' }, 1 ]
-    ]
-});
-
-$.Velocity.RegisterEffect('translateUp', {
-    defaultDuration: 1,
-    calls: [
-        [ { translateZ: 0, translateY: '-100%' }, 1 ]
     ]
 });
 

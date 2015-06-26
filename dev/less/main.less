@@ -1,12 +1,12 @@
 @import '_variables.less';
 @import '_mixins.less';
 
-// Vertical scroller styling (optional)
+// Optional style
 
 *,
 *::after,
 *::before {
-   box-sizing: border-box;
+   .box-sizing(border-box);
 }
 
 html {
@@ -58,7 +58,33 @@ a {
    background-image: url('../images/img-5.jpg');
 }
 
-// Vertical scroller
+.vs-vertical-nav {
+   position: fixed;
+   z-index: 1;
+   top: 50%;
+   right: 3%;
+   bottom: auto;
+   display: block;
+
+   .transform( translateY(-50%) );
+   a {
+      display: block;
+      overflow: hidden;
+      width: 40px;
+      height: 40px;
+      white-space: nowrap;
+      text-indent: 100%;
+      background: url('../images/cd-icon-arrow.svg') no-repeat center center;
+   }
+}
+
+.vs-vertical-nav a.vs-prev {
+   margin-bottom: 10px;
+
+   .transform( rotate(180deg) );
+}
+
+// Mandatory style
 
 body {
    overflow: hidden;
@@ -84,30 +110,4 @@ body {
 
    .background-size( cover );
    .enable-cpu();
-}
-
-.vs-vertical-nav {
-   position: fixed;
-   z-index: 1;
-   top: 50%;
-   right: 3%;
-   bottom: auto;
-   display: block;
-
-   .transform( translateY(-50%) );
-   a {
-      display: block;
-      overflow: hidden;
-      width: 40px;
-      height: 40px;
-      white-space: nowrap;
-      text-indent: 100%;
-      background: url('../images/cd-icon-arrow.svg') no-repeat center center;
-   }
-}
-
-.vs-vertical-nav a.vs-prev {
-   margin-bottom: 10px;
-
-   .transform( rotate(180deg) );
 }
