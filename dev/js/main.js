@@ -1,95 +1,102 @@
-jQuery( document ).ready(function( $ ) {
+var verticalSlider = {
 
-	// General variables
-	var	delta 		    = 0;
-    var scrollThreshold = 1;
-    var animating 		= false;
+    // Variables defined by the user
+    scrollThreshold: 1,
+    sectionsContainer: null,
+    sections: null,
 
-    // DOM elements
-    var sectionsContainer = $('.vs-slider');
-    var sections          = $('.vs-section');
-
-	// Initialise styles
-	var currentSection = sections.filter('.active');
-
-    // Animations settings
-	var	animationsSettings = {
-		visible: 'translateNone',
-		top:     'translateUp.half',
-		bottom:  'translateDown',
-		easing:  'easeInCubic',
-		duration: 800
-	};
+    // Other variables
+    delta: 0,
+    animating: false,
+    currentSection: null,
+    animationsSettings: {
+        visible: 'translateNone',
+        top:     'translateUp.half',
+        bottom:  'translateDown',
+        easing:  'easeInCubic',
+        duration: 800
+    },
 
     // Initialise the vertical scroller
-    function init() {
+    init: function() {
+
+        var _this = this;
+
+        // Initialise variables
+        this.sectionsContainer = $('.vs-slider');
+        this.sections          = $('.vs-section');
+        this.currentSection    = this.sections.filter('.active');
+
+        console.log( this.sections );
 
         // Define the height of sections
-        sections.height( $( window ).height() );
+        this.sections.height( $( window ).height() );
 
         // Add a 100ms time out to avoid an issue where the first section swipe effect is lagging
         setTimeout(function() {
 
             // Current section
-            currentSection.velocity( animationsSettings.visible, 0 );
+            _this.currentSection.velocity( _this.animationsSettings.visible, 0 );
 
             // Bottom section
-            if( currentSection.prevAll('.vs-section').index() > -1 ) {
-                currentSection.prevAll('.vs-section').css('opacity', 1).velocity( animationsSettings.top, 0 );
+            if( _this.currentSection.prevAll('.vs-section').index() > -1 ) {
+                _this.currentSection.prevAll('.vs-section').css('opacity', 1).velocity( _this.animationsSettings.top, 0 );
             }
 
             // Top section
-            if( currentSection.nextAll('.vs-section').index() > -1 ) {
-                currentSection.nextAll('.vs-section').css('opacity', 1).velocity( animationsSettings.bottom, 0 );
+            if( _this.currentSection.nextAll('.vs-section').index() > -1 ) {
+                _this.currentSection.nextAll('.vs-section').css('opacity', 1).velocity( _this.animationsSettings.bottom, 0 );
             }
 
             // Bind events
-            bindEvents();
+            _this.bindEvents();
 
         }, 100);
 
-    }
+    },
 
-    function prev() {
+    prev: function() {
         // All tests will be done in the moveTo function
-        moveTo( currentSection.index() - 1 );
-    }
+        this.moveTo( this.currentSection.index() - 1 );
+    },
 
-    function next() {
+    next: function() {
         // All tests will be done in the moveTo function
-        moveTo( currentSection.index() + 1 );
-    }
+        this.moveTo( this.currentSection.index() + 1 );
+    },
 
-    function moveTo( sectionIndex ) {
+    moveTo: function( sectionIndex ) {
 
+        var _this = this;
         var nextSection;
         var animation;
 
+
         // Test the slider is not already moving and the requested section is not the current one
-        if( !animating && currentSection.index() !== sectionIndex ) {
+        if( !this.animating && this.currentSection.index() !== sectionIndex ) {
 
             // Animations starting
-            animating = true;
+            _this.animating = true;
 
             // Test if the requested section is not before the first or after the last one
-            if( sectionIndex > -1 && sectionIndex < sections.length ) {
+            if( sectionIndex > -1 && sectionIndex < _this.sections.length ) {
 
-                if( sectionIndex > currentSection.index() ) { // Requested section is after the current one
-                    nextSection = currentSection.next('.vs-section');
-                    animation   = animationsSettings.top;
+                if( sectionIndex > _this.currentSection.index() ) { // Requested section is after the current one
+                    nextSection = _this.currentSection.next('.vs-section');
+                    animation   = _this.animationsSettings.top;
                 } else { // Requested section is before the current one
-                    nextSection = currentSection.prev('.vs-section');
-                    animation   = animationsSettings.bottom;
+                    nextSection = _this.currentSection.prev('.vs-section');
+                    animation   = _this.animationsSettings.bottom;
                 }
 
                 // Actual animation
-                currentSection.removeClass('active').velocity( animation, animationsSettings.easing, animationsSettings.duration );
+                _this.currentSection.removeClass('active').velocity( animation, _this.animationsSettings.easing, _this.animationsSettings.duration );
 
-                nextSection.addClass('active').velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function() {
+                nextSection.addClass('active').velocity(_this.animationsSettings.visible, _this.animationsSettings.easing, _this.animationsSettings.duration, function() {
                     // Animations stopped
-                    animating      = false;
+                    _this.animating      = false;
                     // Update current section variable
-                    currentSection = nextSection;
+                    _this.currentSection = nextSection;
                 });
 
             } else {
@@ -97,13 +104,13 @@ jQuery( document ).ready(function( $ ) {
                 // At this stage the requested section is either after the last one or before the first one
 
                 if( sectionIndex <= -1 ) { // Requested section is before the first one
-                    currentSection.velocity( 'bounceDown', animationsSettings.easing, 400 );
+                    _this.currentSection.velocity( 'bounceDown', _this.animationsSettings.easing, 400 );
                 } else if( sectionIndex >= sections.length ) { // Requested section is after the last one
-                    currentSection.velocity( 'bounceUp', animationsSettings.easing, 400 );
+                    _this.currentSection.velocity( 'bounceUp', _this.animationsSettings.easing, 400 );
                 }
 
                 // Animations stopped
-                animating = false;
+                _this.animating = false;
 
             }
 
@@ -112,13 +119,15 @@ jQuery( document ).ready(function( $ ) {
             return false;
         }
 
-    }
+    },
 
-    function bindEvents() {
+    bindEvents: function() {
+
+        var _this = this;
 
         // Resize sections on window resize
         $( window ).on('resize', function() {
-            sections.height( $( window ).height() );
+            _this.sections.height( $( window ).height() );
         });
 
         // Scroll with mousewheel actions
@@ -127,20 +136,20 @@ jQuery( document ).ready(function( $ ) {
             // Check the scroll direction
             if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
 
-                delta--;
+                _this.delta--;
 
-                if( Math.abs( delta ) >= scrollThreshold ) {
-                    prev();
+                if( Math.abs( _this.delta ) >= _this.scrollThreshold ) {
+                    _this.prev();
                 } else {
                     return false;
                 }
 
             } else {
 
-                delta++;
+                _this.delta++;
 
-                if( delta >= scrollThreshold ) {
-                    next();
+                if( _this.delta >= _this.scrollThreshold ) {
+                    _this.next();
                 } else {
                     return false;
                 }
@@ -158,9 +167,9 @@ jQuery( document ).ready(function( $ ) {
         $( document ).on('keyup', function( event ) {
 
             if( event.which == '40' ) {
-                next();
+                _this.next();
             } else if( event.which == '38' ) {
-                prev();
+                _this.prev();
             }
 
         });
@@ -171,33 +180,30 @@ jQuery( document ).ready(function( $ ) {
             // Hammer.js
 
             // Swipe gesture
-            var hammerVS = new Hammer( sectionsContainer[0] );
+            var hammerVS = new Hammer( _this.sectionsContainer[0] );
 
             hammerVS.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
 
-            hammerVS.on('swipeup', function() {   next(); });
-            hammerVS.on('swipedown', function() { prev(); });
+            hammerVS.on('swipeup', function() {   _this.next(); });
+            hammerVS.on('swipedown', function() { _this.prev(); });
 
             // Navigation arrows
             var hammerVSprev = new Hammer( $('.vs-prev')[0] );
             var hammerVSnext = new Hammer( $('.vs-next')[0] );
 
-            hammerVSprev.on('tap', function() { prev(); });
-            hammerVSnext.on('tap', function() { next(); });
+            hammerVSprev.on('tap', function() { _this.prev(); });
+            hammerVSnext.on('tap', function() { _this.next(); });
 
         } else {
 
-            $('.vs-prev').on('click', function() { prev(); });
-            $('.vs-next').on('click', function() { next(); });
+            $('.vs-prev').on('click', function() { _this.prev(); });
+            $('.vs-next').on('click', function() { _this.next(); });
 
         }
 
     }
 
-    // Vertical scroller initialisation
-    init();
-
-});
+}
 
 // Register Velocity effects
 $.Velocity.RegisterEffect('translateNone', {
@@ -235,4 +241,10 @@ $.Velocity.RegisterEffect('bounceUp', {
         [ { translateZ: 0, translateY: '-10%' }, 1 ],
         [ { translateZ: 0, translateY: '0%' }, 1 ]
     ]
+});
+
+jQuery( document ).ready(function( $ ) {
+
+    verticalSlider.init();
+
 });
