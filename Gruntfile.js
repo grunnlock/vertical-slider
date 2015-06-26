@@ -47,7 +47,7 @@ module.exports = function( grunt ) {
 
 		// Check JS syntax to avoid errors
 		jshint: {
-			all: ['<%= config.dev %>/<%= config.folders.js %>/**/*.js']
+			all: ['<%= config.dev %>/<%= config.folders.js %>/*.js']
 		},
 
 	    // Less (CSS pre-processor)
@@ -86,7 +86,7 @@ module.exports = function( grunt ) {
 	});
 
 	grunt.registerTask('serve', [
-		// 'jshint',
+		'jshint',
 		'concurrent:serve',
 		'watch'
 	]);

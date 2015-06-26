@@ -204,7 +204,7 @@ var verticalSlider = {
 
     }
 
-}
+};
 
 // Register Velocity effects
 $.Velocity.RegisterEffect('translateNone', {
