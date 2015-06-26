@@ -71,7 +71,6 @@ var verticalSlider = {
         var nextSection;
         var animation;
 
-
         // Test the slider is not already moving and the requested section is not the current one
         if( !this.animating && this.currentSection.index() !== sectionIndex ) {
 
@@ -104,13 +103,14 @@ var verticalSlider = {
                 // At this stage the requested section is either after the last one or before the first one
 
                 if( sectionIndex <= -1 ) { // Requested section is before the first one
-                    _this.currentSection.velocity( 'bounceDown', _this.animationsSettings.easing, 400 );
+                    _this.currentSection.velocity( 'bounceDown', _this.animationsSettings.easing, 400, function() {
+                        _this.animating = false;
+                    });
                 } else if( sectionIndex >= sections.length ) { // Requested section is after the last one
-                    _this.currentSection.velocity( 'bounceUp', _this.animationsSettings.easing, 400 );
+                    _this.currentSection.velocity( 'bounceUp', _this.animationsSettings.easing, 400, function() {
+                        _this.animating = false;
+                    });
                 }
-
-                // Animations stopped
-                _this.animating = false;
 
             }
 
