@@ -30,20 +30,20 @@ jQuery( document ).ready(function( $ ) {
         // Current section
         currentSection
             .css('opacity', 1)
-            .children('.vs-section-inside').velocity( animationsSettings.visible, 0 );
+            .velocity( animationsSettings.visible, 0 );
 
         // Bottom section
         if( currentSection.prevAll('.vs-section').index() > -1 ) {
             currentSection.prevAll('.vs-section')
                 .css('opacity', 1)
-                .children('.vs-section-inside').velocity( animationsSettings.top, 0 );
+                .velocity( animationsSettings.top, 0 );
         }
 
         // Top section
         if( currentSection.nextAll('.vs-section').index() > -1 ) {
             currentSection.nextAll('.vs-section')
                 .css('opacity', 1)
-                .children('.vs-section-inside').velocity( animationsSettings.bottom, 0 );
+                .velocity( animationsSettings.bottom, 0 );
         }
 
         // Bind events
@@ -85,10 +85,10 @@ jQuery( document ).ready(function( $ ) {
 
                 // Actual animation
                 currentSection.removeClass('active');
-                currentSection.children('.vs-section-inside').velocity( animation, animationsSettings.easing, animationsSettings.duration ).end();
+                currentSection.velocity( animation, animationsSettings.easing, animationsSettings.duration ).end();
 
                 nextSection.addClass('active');
-                nextSection.children('.vs-section-inside').velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function() {
+                nextSection.velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function() {
                         // Animations stopped
                         animating      = false;
                         // Update current section variable
