@@ -28,22 +28,16 @@ jQuery( document ).ready(function( $ ) {
         sections.height( $( window ).height() );
 
         // Current section
-        currentSection
-            .css('opacity', 1)
-            .velocity( animationsSettings.visible, 0 );
+        currentSection.css('opacity', 1).velocity( 'translateNone', 0 );
 
         // Bottom section
         if( currentSection.prevAll('.vs-section').index() > -1 ) {
-            currentSection.prevAll('.vs-section')
-                .css('opacity', 1)
-                .velocity( animationsSettings.top, 0 );
+            currentSection.prevAll('.vs-section').css('opacity', 1).velocity( 'translateUp.half', 0 );
         }
 
         // Top section
         if( currentSection.nextAll('.vs-section').index() > -1 ) {
-            currentSection.nextAll('.vs-section')
-                .css('opacity', 1)
-                .velocity( animationsSettings.bottom, 0 );
+            currentSection.nextAll('.vs-section').css('opacity', 1).velocity( 'translateDown', 0 );
         }
 
         // Bind events
@@ -84,25 +78,14 @@ jQuery( document ).ready(function( $ ) {
                 }
 
                 // Actual animation
-                currentSection.removeClass('active');
-                currentSection.velocity( animation, animationsSettings.easing, animationsSettings.duration ).end();
+                currentSection.removeClass('active').velocity( animation, animationsSettings.easing, animationsSettings.duration ).end();
 
-                nextSection.addClass('active');
-                nextSection.velocity(animationsSettings.visible, animationsSettings.easing, animationsSettings.duration, function() {
-                        // Animations stopped
-                        animating      = false;
-                        // Update current section variable
-                        currentSection = sections.filter('.active');
-                    });
-
-                // currentSection.removeClass('active');
-                // nextSection.addClass('active');
-
-                // // Animations stopped
-                // animating      = false;
-                // // Update current section variable
-                // currentSection = sections.filter('.active');
-
+                nextSection.addClass('active').velocity('translateNone', animationsSettings.easing, animationsSettings.duration, function() {
+                    // Animations stopped
+                    animating      = false;
+                    // Update current section variable
+                    currentSection = nextSection;
+                });
 
             } else {
 
@@ -110,11 +93,11 @@ jQuery( document ).ready(function( $ ) {
 
                 if( sectionIndex <= -1 ) { // Requested section is before the first one
 
-                    console.log('before');
+                    currentSection.velocity( 'bounceDown', animationsSettings.easing, 400 ).end();
 
                 } else if( sectionIndex >= sections.length ) { // Requested section is after the last one
 
-                    console.log('after');
+                    currentSection.velocity( 'bounceUp', animationsSettings.easing, 400 ).end();
 
                 }
 
@@ -218,36 +201,46 @@ jQuery( document ).ready(function( $ ) {
 });
 
 // Register Velocity effects
-// None
-$.Velocity
-    .RegisterEffect('translateUp', {
-    	defaultDuration: 1,
-        calls: [
-            [ { translateZ: 0, translateY: '-100%' }, 1 ]
-        ]
-    });
+$.Velocity.RegisterEffect('translateNone', {
+    defaultDuration: 1,
+    calls: [
+        [ { translateZ: 0, translateY: '0', opacity: '1' }, 1 ]
+    ]
+});
 
-$.Velocity
-    .RegisterEffect('translateDown', {
-    	defaultDuration: 1,
-        calls: [
-            [ { translateZ: 0, translateY: '100%' }, 1 ]
-        ]
-    });
+$.Velocity.RegisterEffect('translateDown', {
+    defaultDuration: 1,
+    calls: [
+        [ { translateZ: 0, translateY: '100%' }, 1 ]
+    ]
+});
 
-$.Velocity
-    .RegisterEffect('translateNone', {
-    	defaultDuration: 1,
-        calls: [
-            [ { translateZ: 0, translateY: '0', opacity: '1' }, 1 ]
-        ]
-    });
+$.Velocity.RegisterEffect('translateUp', {
+    defaultDuration: 1,
+    calls: [
+        [ { translateZ: 0, translateY: '-100%' }, 1 ]
+    ]
+});
 
-// Parallax
-$.Velocity
-    .RegisterEffect('translateUp.half', {
-    	defaultDuration: 1,
-        calls: [
-            [ { translateZ: 0, translateY: '-50%' }, 1 ]
-        ]
-    });
+$.Velocity.RegisterEffect('translateUp.half', {
+    defaultDuration: 1,
+    calls: [
+        [ { translateZ: 0, translateY: '-50%' }, 1 ]
+    ]
+});
+
+$.Velocity.RegisterEffect('bounceDown', {
+    defaultDuration: 1,
+    calls: [
+        [ { translateZ: 0, translateY: '10%' }, 1 ],
+        [ { translateZ: 0, translateY: '0%' }, 1 ]
+    ]
+});
+
+$.Velocity.RegisterEffect('bounceUp', {
+    defaultDuration: 1,
+    calls: [
+        [ { translateZ: 0, translateY: '-10%' }, 1 ],
+        [ { translateZ: 0, translateY: '0%' }, 1 ]
+    ]
+});
