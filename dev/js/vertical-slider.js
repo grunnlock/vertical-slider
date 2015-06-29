@@ -4,10 +4,9 @@ var verticalSlider = {
     scrollThreshold: 1,
     sectionsContainer: null,
     sections: null,
-    infoSelector: null, // Element on which informational classes will be put (current section index, touch enabled...)
+    infoSelector: null, // Element on which informational classes will be put (current section index, last section...)
 
     // Other variables
-    delta: 0,
     animating: false,
     currentSection: null,
     animationsSettings: {
@@ -97,7 +96,7 @@ var verticalSlider = {
 
                 nextSection.addClass('active').velocity(_this.animationsSettings.visible, _this.animationsSettings.easing, _this.animationsSettings.duration, function() {
                     // Animations stopped
-                    _this.animating      = false;
+                    _this.animating = false;
                     // Update informational classes
                     _this.updateInfoClasses( nextSection );
                     // Update current section variable
@@ -109,11 +108,11 @@ var verticalSlider = {
                 // At this stage the requested section is either after the last one or before the first one
 
                 if( sectionIndex <= -1 ) { // Requested section is before the first one
-                    _this.currentSection.velocity( 'bounceDown', _this.animationsSettings.easing, 400, function() {
+                    _this.currentSection.velocity('bounceDown', _this.animationsSettings.easing, 400, function() {
                         _this.animating = false;
                     });
                 } else if( sectionIndex >= _this.sections.length ) { // Requested section is after the last one
-                    _this.currentSection.velocity( 'bounceUp', _this.animationsSettings.easing, 400, function() {
+                    _this.currentSection.velocity('bounceUp', _this.animationsSettings.easing, 400, function() {
                         _this.animating = false;
                     });
                 }
@@ -155,10 +154,11 @@ var verticalSlider = {
     bindEvents: function() {
 
         var _this = this;
+        var delta = 0;
 
+        // Resize sections on orientation change for tablets and mobiles
         if( Modernizr.mq('only screen and (max-width: 1200px)') ) {
-            // Resize sections on window resize, on mobile
-            $( window ).on('resize', function() {
+            $( window ).on('orientationchange', function() {
                 _this.sectionsContainer.height( $( window ).height() );
             });
         }
@@ -169,9 +169,9 @@ var verticalSlider = {
             // Check the scroll direction
             if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
 
-                _this.delta--;
+                delta--;
 
-                if( Math.abs( _this.delta ) >= _this.scrollThreshold ) {
+                if( Math.abs( delta ) >= _this.scrollThreshold ) {
                     _this.prev();
                 } else {
                     return false;
@@ -179,9 +179,9 @@ var verticalSlider = {
 
             } else {
 
-                _this.delta++;
+                delta++;
 
-                if( _this.delta >= _this.scrollThreshold ) {
+                if( delta >= _this.scrollThreshold ) {
                     _this.next();
                 } else {
                     return false;
@@ -197,7 +197,7 @@ var verticalSlider = {
         });
 
         // Keyboard arrows actions
-        $( document ).on('keyup', function( event ) {
+        $( window ).on('keyup', function( event ) {
 
             if( event.which === 40 ) {
                 _this.next();
