@@ -4,6 +4,7 @@ var verticalSlider = {
     scrollThreshold: 1,
     sectionsContainer: null,
     sections: null,
+    infoSelector: null, // Element on which informational classes will be put (current section index, touch enabled...)
 
     // Other variables
     delta: 0,
@@ -25,6 +26,7 @@ var verticalSlider = {
         this.sectionsContainer = $('.vs-slider');
         this.sections          = $('.vs-section');
         this.currentSection    = this.sections.filter('.active');
+        this.infoSelector      = $('html');
 
         // Change vh to px value on mobile
         if( Modernizr.mq('only screen and (max-width: 1200px)') ) {
@@ -34,18 +36,21 @@ var verticalSlider = {
         // Add a 100ms time out to avoid an issue where the first section swipe effect is lagging
         setTimeout(function() {
 
-            // Current section
+            // Position current section
             _this.currentSection.velocity( _this.animationsSettings.visible, 0 );
 
-            // Bottom section
-            if( _this.currentSection.prevAll('.vs-section').index() > -1 ) {
+            // Position bottom section
+            if( _this.currentSection.prev('.vs-section').index() > -1 ) {
                 _this.currentSection.prevAll('.vs-section').css('opacity', 1).velocity( _this.animationsSettings.top, 0 );
             }
 
-            // Top section
-            if( _this.currentSection.nextAll('.vs-section').index() > -1 ) {
+            // Position top section
+            if( _this.currentSection.next('.vs-section').index() > -1 ) {
                 _this.currentSection.nextAll('.vs-section').css('opacity', 1).velocity( _this.animationsSettings.bottom, 0 );
             }
+
+            // Add informational classes
+            _this.updateInfoClasses( _this.currentSection );
 
             // Bind events
             _this.bindEvents();
@@ -93,6 +98,8 @@ var verticalSlider = {
                 nextSection.addClass('active').velocity(_this.animationsSettings.visible, _this.animationsSettings.easing, _this.animationsSettings.duration, function() {
                     // Animations stopped
                     _this.animating      = false;
+                    // Update informational classes
+                    _this.updateInfoClasses( nextSection );
                     // Update current section variable
                     _this.currentSection = nextSection;
                 });
@@ -116,6 +123,31 @@ var verticalSlider = {
         } else {
             // Requested section is the current one
             return false;
+        }
+
+    },
+
+    updateInfoClasses: function( section ) {
+
+        var _this = this;
+
+        // Remove all informational classes using the prefix "vs-section-"
+        this.infoSelector.removeClass(function ( index, css ) {
+            return ( css.match (/\bvs-section-\S+/g) || [] ).join(' ');
+        });
+
+        // Remove class indicating the current section is the first and/or the last one
+        // And add a class indicating the current section number
+        this.infoSelector.addClass( 'vs-section-' + section.index() );
+
+        // Test if the section is the first one
+        if( section.index() === 0 ) {
+            this.infoSelector.addClass('vs-section-first');
+        }
+
+        // Test if the section is the last one
+        if( section.index() === _this.sections.length - 1 ) {
+            this.infoSelector.addClass('vs-section-last');
         }
 
     },
@@ -167,9 +199,9 @@ var verticalSlider = {
         // Keyboard arrows actions
         $( document ).on('keyup', function( event ) {
 
-            if( event.which == '40' ) {
+            if( event.which === 40 ) {
                 _this.next();
-            } else if( event.which == '38' ) {
+            } else if( event.which === 38 ) {
                 _this.prev();
             }
 
