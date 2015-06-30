@@ -17,7 +17,7 @@ var verticalSlider = {
         duration: 800
     },
 
-    init: function() {
+    init: function( callback ) {
 
         var _this = this;
 
@@ -53,6 +53,11 @@ var verticalSlider = {
 
             // Bind events
             _this.bindEvents();
+
+            // Callback
+            if( typeof( callback ) !== 'undefined' ) {
+                callback();
+            }
 
         }, 100);
 
