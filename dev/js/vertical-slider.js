@@ -1,7 +1,7 @@
 var verticalSlider = {
 
     // Variables defined by the user
-    scrollThreshold: 1,
+    scrollThreshold: 4,
     sectionsContainer: null,
     sections: null,
     infoSelector: null, // Element on which informational classes will be put (current section index, last section...)
@@ -14,7 +14,8 @@ var verticalSlider = {
         top:     'translateUp.half',
         bottom:  'translateDown',
         easing:  'easeInCubic',
-        duration: 800
+        duration: 800,
+        scrollDelay: 400 // This delays is here to avoid sections jumps when scrolling with a trackpad
     },
 
     init: function( callback ) {
@@ -47,6 +48,11 @@ var verticalSlider = {
             if( _this.currentSection.next('.vs-section').index() > -1 ) {
                 _this.currentSection.nextAll('.vs-section').css('opacity', 1).velocity( _this.animationsSettings.bottom, 0 );
             }
+
+            // Add sections numbers
+            _this.sections.each(function( i ) {
+                $( this ).addClass( 'vs-section-' + i );
+            });
 
             // Add informational classes
             _this.updateInfoClasses( _this.currentSection );
@@ -101,7 +107,9 @@ var verticalSlider = {
 
                 nextSection.addClass('active').velocity(_this.animationsSettings.visible, _this.animationsSettings.easing, _this.animationsSettings.duration, function() {
                     // Animations stopped
-                    _this.animating = false;
+                    setTimeout(function() {
+                        _this.animating = false;
+                    }, _this.animationsSettings.scrollDelay);
                     // Update informational classes
                     _this.updateInfoClasses( nextSection );
                     // Update current section variable
