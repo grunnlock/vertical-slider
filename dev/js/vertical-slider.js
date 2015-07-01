@@ -1,7 +1,7 @@
 var verticalSlider = {
 
     // Variables defined by the user
-    scrollThreshold: 30,
+    scrollThreshold: 20,
     sectionsContainer: null,
     sections: null,
     infoSelector: null, // Element on which informational classes will be put (current section index, last section...)
