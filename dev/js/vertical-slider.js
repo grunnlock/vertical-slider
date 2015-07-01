@@ -4,7 +4,7 @@ var verticalSlider = {
     scrollThreshold: 20,
     sectionsContainer: null,
     sections: null,
-    infoSelector: null, // Element on which informational classes will be put (current section index, last section...)
+    infoSelector: null, // Element on which informational clas ses will be put (current section index, last section...)
 
     // Other variables
     animating: false,
@@ -175,8 +175,6 @@ var verticalSlider = {
 
         // Scroll with mousewheel actions
         $( window ).on('mousewheel', function( event ) {
-
-            console.log( event.deltaY );
 
             // Check the scroll direction
             if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
