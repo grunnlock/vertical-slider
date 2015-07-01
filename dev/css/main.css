@@ -10,7 +10,7 @@ html {
 }
 body {
   font-family: 'Open Sans', sans-serif;
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   color: #fff;
   background-color: #22283f;
   -webkit-font-smoothing: antialiased;
@@ -18,7 +18,15 @@ body {
 }
 a {
   text-decoration: none;
-  color: #267481;
+  color: #fff;
+}
+.vs-section {
+  background-repeat: no-repeat;
+  background-position: center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 .vs-section h2 {
   position: absolute;
@@ -31,6 +39,7 @@ a {
   margin: auto;
   font-size: 4rem;
   font-weight: 300;
+  line-height: 4rem;
   text-align: center;
 }
 .vs-section:nth-of-type(1) {
@@ -48,9 +57,9 @@ a {
 .vs-section:nth-of-type(5) {
   background-image: url('../images/img-5.jpg');
 }
-.vs-vertical-nav {
+.vs-nav {
   position: fixed;
-  z-index: 1;
+  z-index: 50;
   top: 50%;
   right: 3%;
   bottom: auto;
@@ -61,20 +70,32 @@ a {
   -o-transform: translateY(-50%);
   transform: translateY(-50%);
 }
-.vs-vertical-nav a {
-  display: block;
-  overflow: hidden;
-  width: 40px;
-  height: 40px;
-  white-space: nowrap;
-  text-indent: 100%;
-  background: url('../images/cd-icon-arrow.svg') no-repeat center center;
+.vs-nav li:first-child {
+  margin-bottom: 20px;
 }
-.vs-vertical-nav a.vs-prev {
+.vs-nav a {
+  display: block;
+  width: 22px;
+  height: 25px;
+  text-indent: -9999px;
+  background: url('../images/icon-arrow.svg') no-repeat center center;
+}
+.vs-nav a.vs-prev {
   margin-bottom: 10px;
   -webkit-transform: rotate(180deg);
   -moz-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   -o-transform: rotate(180deg);
   transform: rotate(180deg);
+}
+footer {
+  position: fixed;
+  bottom: 15px;
+  left: 15px;
+}
+footer p {
+  color: #999;
+}
+footer a:nth-child(2) {
+  border-bottom: 1px dotted #fff;
 }

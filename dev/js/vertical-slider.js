@@ -1,12 +1,12 @@
 var verticalSlider = {
 
     // Variables defined by the user
-    scrollThreshold: 1,
+    scrollThreshold: 20,
     sectionsContainer: null,
     sections: null,
+    infoSelector: null, // Element on which informational clas ses will be put (current section index, last section...)
 
     // Other variables
-    delta: 0,
     animating: false,
     currentSection: null,
     animationsSettings: {
@@ -17,7 +17,7 @@ var verticalSlider = {
         duration: 800
     },
 
-    init: function() {
+    init: function( callback ) {
 
         var _this = this;
 
@@ -25,6 +25,7 @@ var verticalSlider = {
         this.sectionsContainer = $('.vs-slider');
         this.sections          = $('.vs-section');
         this.currentSection    = this.sections.filter('.active');
+        this.infoSelector      = $('html');
 
         // Change vh to px value on mobile
         if( Modernizr.mq('only screen and (max-width: 1200px)') ) {
@@ -34,21 +35,34 @@ var verticalSlider = {
         // Add a 100ms time out to avoid an issue where the first section swipe effect is lagging
         setTimeout(function() {
 
-            // Current section
+            // Position current section
             _this.currentSection.velocity( _this.animationsSettings.visible, 0 );
 
-            // Bottom section
-            if( _this.currentSection.prevAll('.vs-section').index() > -1 ) {
+            // Position bottom section
+            if( _this.currentSection.prev('.vs-section').index() > -1 ) {
                 _this.currentSection.prevAll('.vs-section').css('opacity', 1).velocity( _this.animationsSettings.top, 0 );
             }
 
-            // Top section
-            if( _this.currentSection.nextAll('.vs-section').index() > -1 ) {
+            // Position top section
+            if( _this.currentSection.next('.vs-section').index() > -1 ) {
                 _this.currentSection.nextAll('.vs-section').css('opacity', 1).velocity( _this.animationsSettings.bottom, 0 );
             }
 
+            // Add sections numbers
+            _this.sections.each(function( i ) {
+                $( this ).addClass( 'vs-section-' + i );
+            });
+
+            // Add informational classes
+            _this.updateInfoClasses( _this.currentSection );
+
             // Bind events
             _this.bindEvents();
+
+            // Callback
+            if( typeof( callback ) !== 'undefined' ) {
+                callback();
+            }
 
         }, 100);
 
@@ -92,7 +106,9 @@ var verticalSlider = {
 
                 nextSection.addClass('active').velocity(_this.animationsSettings.visible, _this.animationsSettings.easing, _this.animationsSettings.duration, function() {
                     // Animations stopped
-                    _this.animating      = false;
+                    _this.animating = false;
+                    // Update informational classes
+                    _this.updateInfoClasses( nextSection );
                     // Update current section variable
                     _this.currentSection = nextSection;
                 });
@@ -102,11 +118,11 @@ var verticalSlider = {
                 // At this stage the requested section is either after the last one or before the first one
 
                 if( sectionIndex <= -1 ) { // Requested section is before the first one
-                    _this.currentSection.velocity( 'bounceDown', _this.animationsSettings.easing, 400, function() {
+                    _this.currentSection.velocity('bounceDown', _this.animationsSettings.easing, 400, function() {
                         _this.animating = false;
                     });
                 } else if( sectionIndex >= _this.sections.length ) { // Requested section is after the last one
-                    _this.currentSection.velocity( 'bounceUp', _this.animationsSettings.easing, 400, function() {
+                    _this.currentSection.velocity('bounceUp', _this.animationsSettings.easing, 400, function() {
                         _this.animating = false;
                     });
                 }
@@ -120,56 +136,69 @@ var verticalSlider = {
 
     },
 
-    bindEvents: function() {
+    updateInfoClasses: function( section ) {
 
         var _this = this;
 
+        // Remove all informational classes using the prefix "vs-section-"
+        this.infoSelector.removeClass(function ( index, css ) {
+            return ( css.match (/\bvs-section-\S+/g) || [] ).join(' ');
+        });
+
+        // Remove class indicating the current section is the first and/or the last one
+        // And add a class indicating the current section number
+        this.infoSelector.addClass( 'vs-section-' + section.index() );
+
+        // Test if the section is the first one
+        if( section.index() === 0 ) {
+            this.infoSelector.addClass('vs-section-first');
+        }
+
+        // Test if the section is the last one
+        if( section.index() === _this.sections.length - 1 ) {
+            this.infoSelector.addClass('vs-section-last');
+        }
+
+    },
+
+    bindEvents: function() {
+
+        var _this = this;
+        var delta = 0;
+
+        // Resize sections on orientation change for tablets and mobiles
         if( Modernizr.mq('only screen and (max-width: 1200px)') ) {
-            // Resize sections on window resize, on mobile
-            $( window ).on('resize', function() {
+            $( window ).on('orientationchange', function() {
                 _this.sectionsContainer.height( $( window ).height() );
             });
         }
 
         // Scroll with mousewheel actions
-        $( window ).on('DOMMouseScroll mousewheel', function( event ) {
+        $( window ).on('mousewheel', function( event ) {
 
             // Check the scroll direction
             if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
 
-                _this.delta--;
-
-                if( Math.abs( _this.delta ) >= _this.scrollThreshold ) {
+                if( Math.abs( event.deltaY ) >= _this.scrollThreshold ) {
                     _this.prev();
-                } else {
-                    return false;
                 }
 
             } else {
 
-                _this.delta++;
-
-                if( _this.delta >= _this.scrollThreshold ) {
+                if( Math.abs( event.deltaY ) >= _this.scrollThreshold ) {
                     _this.next();
-                } else {
-                    return false;
                 }
 
             }
 
-            // Reset delta
-            delta = 0;
-
-            return false;
-
         });
 
         // Keyboard arrows actions
-        $( document ).on('keyup', function( event ) {
+        $( window ).on('keyup', function( event ) {
 
-            if( event.which == '40' ) {
+            if( event.which === 40 ) {
                 _this.next();
-            } else if( event.which == '38' ) {
+            } else if( event.which === 38 ) {
                 _this.prev();
             }
 
@@ -204,7 +233,7 @@ var verticalSlider = {
 
     }
 
-}
+};
 
 // Register Velocity effects
 $.Velocity.RegisterEffect('translateNone', {

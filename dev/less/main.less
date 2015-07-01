@@ -1,4 +1,3 @@
-@import '_variables.less';
 @import '_mixins.less';
 
 *,
@@ -13,7 +12,7 @@ html {
 
 body {
    font-family: 'Open Sans', sans-serif;
-   font-size: 1.6rem;
+   font-size: 1.2rem;
    color: #fff;
    background-color: #22283f;
 
@@ -23,21 +22,29 @@ body {
 
 a {
    text-decoration: none;
-   color: #267481;
+   color: #fff;
 }
 
-.vs-section h2 {
-   position: absolute;
-   top: 0;
-   right: 0;
-   bottom: 0;
-   left: 0;
-   display: block;
-   height: 4rem;
-   margin: auto;
-   font-size: 4rem;
-   font-weight: 300;
-   text-align: center;
+.vs-section {
+   background-repeat: no-repeat;
+   background-position: center center;
+
+   .background-size( cover );
+
+   h2 {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: block;
+      height: 4rem;
+      margin: auto;
+      font-size: 4rem;
+      font-weight: 300;
+      line-height: 4rem;
+      text-align: center;
+   }
 }
 
 .vs-section:nth-of-type(1) {
@@ -56,28 +63,45 @@ a {
    background-image: url('../images/img-5.jpg');
 }
 
-.vs-vertical-nav {
+.vs-nav {
    position: fixed;
-   z-index: 1;
+   z-index: 50;
    top: 50%;
    right: 3%;
    bottom: auto;
    display: block;
 
    .transform( translateY(-50%) );
+
+   li:first-child {
+      margin-bottom: 20px;
+   }
+
    a {
       display: block;
-      overflow: hidden;
-      width: 40px;
-      height: 40px;
-      white-space: nowrap;
-      text-indent: 100%;
-      background: url('../images/cd-icon-arrow.svg') no-repeat center center;
+      width: 22px;
+      height: 25px;
+      text-indent: -9999px;
+      background: url('../images/icon-arrow.svg') no-repeat center center;
    }
 }
 
-.vs-vertical-nav a.vs-prev {
+.vs-nav a.vs-prev {
    margin-bottom: 10px;
 
    .transform( rotate(180deg) );
+}
+
+footer {
+   position: fixed;
+   bottom: 15px;
+   left: 15px;
+
+   p {
+      color: #999;
+   }
+
+   a:nth-child(2) {
+      border-bottom: 1px dotted #fff;
+   }
 }
