@@ -1,7 +1,7 @@
 var verticalSlider = {
 
     // Variables defined by the user
-    scrollThreshold: 4,
+    scrollThreshold: 30,
     sectionsContainer: null,
     sections: null,
     infoSelector: null, // Element on which informational classes will be put (current section index, last section...)
@@ -14,8 +14,7 @@ var verticalSlider = {
         top:     'translateUp.half',
         bottom:  'translateDown',
         easing:  'easeInCubic',
-        duration: 800,
-        scrollDelay: 400 // This delays is here to avoid sections jumps when scrolling with a trackpad
+        duration: 800
     },
 
     init: function( callback ) {
@@ -107,9 +106,7 @@ var verticalSlider = {
 
                 nextSection.addClass('active').velocity(_this.animationsSettings.visible, _this.animationsSettings.easing, _this.animationsSettings.duration, function() {
                     // Animations stopped
-                    setTimeout(function() {
-                        _this.animating = false;
-                    }, _this.animationsSettings.scrollDelay);
+                    _this.animating = false;
                     // Update informational classes
                     _this.updateInfoClasses( nextSection );
                     // Update current section variable
@@ -177,35 +174,24 @@ var verticalSlider = {
         }
 
         // Scroll with mousewheel actions
-        $( window ).on('DOMMouseScroll mousewheel', function( event ) {
+        $( window ).on('mousewheel', function( event ) {
+
+            console.log( event.deltaY );
 
             // Check the scroll direction
             if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
 
-                delta--;
-
-                if( Math.abs( delta ) >= _this.scrollThreshold ) {
+                if( Math.abs( event.deltaY ) >= _this.scrollThreshold ) {
                     _this.prev();
-                } else {
-                    return false;
                 }
 
             } else {
 
-                delta++;
-
-                if( delta >= _this.scrollThreshold ) {
+                if( Math.abs( event.deltaY ) >= _this.scrollThreshold ) {
                     _this.next();
-                } else {
-                    return false;
                 }
 
             }
-
-            // Reset delta
-            delta = 0;
-
-            return false;
 
         });
 
