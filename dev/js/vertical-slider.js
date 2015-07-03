@@ -32,19 +32,19 @@ var verticalSlider = {
             _this.sectionsContainer.height( $( window ).height() );
         }
 
+        // Add sections numbers
+        _this.sections.each(function( i ) {
+            $( this ).addClass( 'vs-section-' + i );
+        });
+
+        // Add informational classes
+        _this.updateInfoClasses( _this.currentSection );
+
         // Add a 100ms time out to avoid an issue where the first section swipe effect is lagging
         setTimeout(function() {
 
             // Position current section
             _this.currentSection.velocity( _this.animationsSettings.visible, 0 );
-
-            // Add sections numbers
-            _this.sections.each(function( i ) {
-                $( this ).addClass( 'vs-section-' + i );
-            });
-
-            // Add informational classes
-            _this.updateInfoClasses( _this.currentSection );
 
             // Bind events
             _this.bindEvents();
@@ -85,16 +85,24 @@ var verticalSlider = {
 
                 nextSection = _this.sections.eq( sectionIndex );
 
-                // Position next section
                 if( sectionIndex > _this.currentSection.index() ) { // Requested section is after the current one
+
+                    // Reset sections positions
+                    _this.currentSection.nextAll().css('opacity', 0);
+
+                    // Define animations
                     animation        = _this.animationsSettings.top;
                     animationReverse = _this.animationsSettings.bottom;
+
                 } else { // Requested section is before the current one
+
+                    // Reset sections positions
+                    _this.currentSection.prevAll().css('opacity', 0);
+
+                    // Define animations
                     animation        = _this.animationsSettings.bottom;
                     animationReverse = _this.animationsSettings.top;
                 }
-
-                // Position next section
 
                 // Actual animation
                 _this.currentSection.removeClass('active').velocity( animation, _this.animationsSettings.easing, _this.animationsSettings.duration );
@@ -110,13 +118,14 @@ var verticalSlider = {
                         // Update current section variable
                         _this.currentSection = nextSection;
                     });
-                })
+                });
+
 
             } else {
 
                 // At this stage the requested section is either after the last one or before the first one
 
-                if( sectionIndex <= -1 && _this.currentSection.index() === 0 ) { // Requested section is before the first one and the current section is the first one
+                if( sectionIndex < 0 && _this.currentSection.index() === 0 ) { // Requested section is before the first one and the current section is the first one
 
                     // Lock vertical slider
                     _this.animating = true;
