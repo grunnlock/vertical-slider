@@ -38,16 +38,6 @@ var verticalSlider = {
             // Position current section
             _this.currentSection.velocity( _this.animationsSettings.visible, 0 );
 
-            // Position bottom section
-            if( _this.currentSection.prev('.vs-section').index() > -1 ) {
-                _this.currentSection.prevAll('.vs-section').css('opacity', 1).velocity( _this.animationsSettings.top, 0 );
-            }
-
-            // Position top section
-            if( _this.currentSection.next('.vs-section').index() > -1 ) {
-                _this.currentSection.nextAll('.vs-section').css('opacity', 1).velocity( _this.animationsSettings.bottom, 0 );
-            }
-
             // Add sections numbers
             _this.sections.each(function( i ) {
                 $( this ).addClass( 'vs-section-' + i );
@@ -87,53 +77,66 @@ var verticalSlider = {
         // Test the slider is not already moving and the requested section is not the current one
         if( !this.animating && this.currentSection.index() !== sectionIndex ) {
 
-            // Animations starting
-            _this.animating = true;
-
             // Test if the requested section is not before the first or after the last one
             if( sectionIndex > -1 && sectionIndex < _this.sections.length ) {
 
+                // Lock vertical slider
+                _this.animating = true;
+
                 nextSection = _this.sections.eq( sectionIndex );
 
+                // Position next section
                 if( sectionIndex > _this.currentSection.index() ) { // Requested section is after the current one
-                    animation   = _this.animationsSettings.top;
+                    animation        = _this.animationsSettings.top;
+                    animationReverse = _this.animationsSettings.bottom;
                 } else { // Requested section is before the current one
-                    animation   = _this.animationsSettings.bottom;
+                    animation        = _this.animationsSettings.bottom;
+                    animationReverse = _this.animationsSettings.top;
                 }
+
+                // Position next section
 
                 // Actual animation
                 _this.currentSection.removeClass('active').velocity( animation, _this.animationsSettings.easing, _this.animationsSettings.duration );
 
-                nextSection.addClass('active').velocity(_this.animationsSettings.visible, _this.animationsSettings.easing, _this.animationsSettings.duration, function() {
-                    // Animations stopped
-                    _this.animating = false;
-                    // Update informational classes
-                    _this.updateInfoClasses( nextSection );
-                    // Update current section variable
-                    _this.currentSection = nextSection;
-                });
+                // Position next section
+                nextSection.css('opacity', 1).velocity( animationReverse, 0, function() {
+                    // Do the animation
+                    $( this ).addClass('active').velocity(_this.animationsSettings.visible, _this.animationsSettings.easing, _this.animationsSettings.duration, function() {
+                        // Unlock vertical slider
+                        _this.animating = false;
+                        // Update informational classes
+                        _this.updateInfoClasses( nextSection );
+                        // Update current section variable
+                        _this.currentSection = nextSection;
+                    });
+                })
 
             } else {
 
                 // At this stage the requested section is either after the last one or before the first one
 
-                // Test if the current section is either the first one or the last one to determine if the bouncing animation needs to be fired or not
-                if( _this.currentSection.index() === 0 || _this.currentSection.index() === _this.sections.length-1 ) {
+                if( sectionIndex <= -1 && _this.currentSection.index() === 0 ) { // Requested section is before the first one and the current section is the first one
 
-                    if( sectionIndex <= -1 ) { // Requested section is before the first one
-                        _this.currentSection.velocity('bounceDown', _this.animationsSettings.easing, 400, function() {
-                            _this.animating = false;
-                        });
-                    } else if( sectionIndex >= _this.sections.length ) { // Requested section is after the last one
-                        _this.currentSection.velocity('bounceUp', _this.animationsSettings.easing, 400, function() {
-                            _this.animating = false;
-                        });
-                    }
+                    // Lock vertical slider
+                    _this.animating = true;
 
-                } else {
+                    // Animation
+                    _this.currentSection.velocity('bounceDown', _this.animationsSettings.easing, 400, function() {
+                        // Unlock vertical slider
+                        _this.animating = false;
+                    });
 
-                    // Animations starting
-                    _this.animating = false;
+                } else if( sectionIndex >= _this.sections.length && _this.currentSection.index() === _this.sections.length-1 ) { // Requested section is after the last one and the current section is the last one
+
+                    // Lock vertical slider
+                    _this.animating = true;
+
+                    // Animation
+                    _this.currentSection.velocity('bounceUp', _this.animationsSettings.easing, 400, function() {
+                        // Unlock vertical slider
+                        _this.animating = false;
+                    });
 
                 }
 
