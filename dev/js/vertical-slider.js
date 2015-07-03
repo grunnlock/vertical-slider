@@ -70,12 +70,12 @@ var verticalSlider = {
 
     prev: function() {
         // All tests will be done in the moveTo function
-        this.moveTo( this.currentSection.index() - 1 );
+        this.moveTo( this.currentSection.index()-1 );
     },
 
     next: function() {
         // All tests will be done in the moveTo function
-        this.moveTo( this.currentSection.index() + 1 );
+        this.moveTo( this.currentSection.index()+1 );
     },
 
     moveTo: function( sectionIndex ) {
@@ -93,11 +93,11 @@ var verticalSlider = {
             // Test if the requested section is not before the first or after the last one
             if( sectionIndex > -1 && sectionIndex < _this.sections.length ) {
 
+                nextSection = _this.sections.eq( sectionIndex );
+
                 if( sectionIndex > _this.currentSection.index() ) { // Requested section is after the current one
-                    nextSection = _this.currentSection.next('.vs-section');
                     animation   = _this.animationsSettings.top;
                 } else { // Requested section is before the current one
-                    nextSection = _this.currentSection.prev('.vs-section');
                     animation   = _this.animationsSettings.bottom;
                 }
 
@@ -117,21 +117,28 @@ var verticalSlider = {
 
                 // At this stage the requested section is either after the last one or before the first one
 
-                if( sectionIndex <= -1 ) { // Requested section is before the first one
-                    _this.currentSection.velocity('bounceDown', _this.animationsSettings.easing, 400, function() {
-                        _this.animating = false;
-                    });
-                } else if( sectionIndex >= _this.sections.length ) { // Requested section is after the last one
-                    _this.currentSection.velocity('bounceUp', _this.animationsSettings.easing, 400, function() {
-                        _this.animating = false;
-                    });
+                // Test if the current section is either the first one or the last one to determine if the bouncing animation needs to be fired or not
+                if( _this.currentSection.index() === 0 || _this.currentSection.index() === _this.sections.length-1 ) {
+
+                    if( sectionIndex <= -1 ) { // Requested section is before the first one
+                        _this.currentSection.velocity('bounceDown', _this.animationsSettings.easing, 400, function() {
+                            _this.animating = false;
+                        });
+                    } else if( sectionIndex >= _this.sections.length ) { // Requested section is after the last one
+                        _this.currentSection.velocity('bounceUp', _this.animationsSettings.easing, 400, function() {
+                            _this.animating = false;
+                        });
+                    }
+
+                } else {
+
+                    // Animations starting
+                    _this.animating = false;
+
                 }
 
             }
 
-        } else {
-            // Requested section is the current one
-            return false;
         }
 
     },
