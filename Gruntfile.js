@@ -8,10 +8,7 @@ module.exports = function( grunt ) {
 		dist: 'www',
 		folders: {
 			js:     'js',
-			css:    'css',
-			less: 	'less',
-			sass:   'scss',
-			images: 'images'
+			css:    'css'
 		}
 	};
 
@@ -32,16 +29,8 @@ module.exports = function( grunt ) {
             },
             all: {
             	files: [
-            		'<%= config.dev %>/**/*.{php,html,htm,xml,txt,htaccess,js,ico,png,jpg,jpeg,gif,json}'
+            		'<%= config.dev %>/**/*'
             	],
-            },
-            less: {
-            	files: ['<%= config.dev %>/<%= config.folders.less %>/**/*.less'],
-       			tasks: ['newer:less']
-            },
-            sass: {
-            	files: ['<%= config.dev %>/<%= config.folders.sass %>/**/*.scss'],
-       			tasks: ['newer:sass']
             }
         },
 
@@ -50,44 +39,10 @@ module.exports = function( grunt ) {
 			all: ['<%= config.dev %>/<%= config.folders.js %>/*.js']
 		},
 
-	    // Less (CSS pre-processor)
-		less: {
-			serve: {
-				files: [{
-					expand: true,
-					cwd:  '<%= config.dev %>/<%= config.folders.less %>',
-					src:  ['*.less'],
-					dest: '<%= config.dev %>/<%= config.folders.css %>',
-					ext:  '.css'
-				}]
-			}
-		},
-
-		// SASS (CSS pre-processor)
-		sass: {
-	        serve: {
-	            files: [{
-					expand: true,
-					cwd:  '<%= config.dev %>/<%= config.folders.sass %>',
-					src:  ['*.scss'],
-					dest: '<%= config.dev %>/<%= config.folders.css %>',
-					ext:  '.css'
-				}]
-	        }
-	    },
-
-		// Run some tasks in parallel to speed up the processes
-	    concurrent: {
-	    	serve: [
-	    		'less'
-	    	]
-	    },
-
 	});
 
 	grunt.registerTask('serve', [
 		'jshint',
-		'concurrent:serve',
 		'watch'
 	]);
 
