@@ -10,7 +10,7 @@
 
             // Autoplay functionality
             autoplay: false,
-            autoplayDuration: 10000,
+            autoplayDuration: 6000,
 
             // Settings for the moveTo function animation
             animations: {
@@ -35,7 +35,7 @@
         this.sectionsContainer = $( sectionsContainer );
 
         // Define options
-        this.options   = $.extend( {}, defaults, options) ;
+        this.options   = $.extend( {}, defaults, options);
         this._defaults = defaults;
         this._name     = pluginName;
 
@@ -58,7 +58,7 @@
                 $.data( this, 'plugin_' + pluginName, new Plugin( this, options ) );
             }
         });
-    }
+    };
 
     // Initialise the plugin
     Plugin.prototype.init = function () {
@@ -81,15 +81,15 @@
         // Bind events
         _this.bindEvents();
 
-        // Add a 100ms time out to avoid an issue where the first section swipe effect is lagging
-        setTimeout(function() {
+        // Launch the autoplay if requested
+        if( _this.options.autoplay ) {
+            _this.autoplay();
+        }
 
-            // Callback
-            if( typeof( _this.options.afterInit ) !== 'undefined' ) {
-                _this.options.afterInit( _this.currentSection );
-            }
-
-        }, 100);
+        // Callback
+        if( typeof( _this.options.afterInit ) !== 'undefined' ) {
+            _this.options.afterInit( _this.currentSection );
+        }
 
     };
 
@@ -122,14 +122,18 @@
                 // Define next section
                 nextSection = _this.sections.eq( sectionIndex );
 
-                if( sectionIndex > _this.currentSectionIndex ) { // Requested section is after the current one
+                // Actions if requested section is after the current one
+                if( sectionIndex > _this.currentSectionIndex ) {
 
                     // Define animations
                     animation        = 'vs_translateUp.half';
                     animationEnd     = 'vs_translateUp';
                     animationReverse = 'vs_translateDown';
 
-                } else { // Requested section is before the current one
+                }
+
+                // Actions if requested section is before the current one
+                else {
 
                     // Define animations
                     animation        = 'vs_translateDown.half';
@@ -173,11 +177,15 @@
                             complete: function() {
                                 // Unlock vertical slider
                                 _this.animating = false;
+
                                 // Update other variables
                                 _this.currentSection      = nextSection;
                                 _this.currentSectionIndex = nextSection.index();
-                                // Reset autoplay timer
-                                _this.autoplay();
+
+                                // Reset autoplay timer if requested
+                                if( _this.options.autoplay ) {
+                                    _this.autoplay();
+                                }
                             }
                         });
 
@@ -188,7 +196,8 @@
 
                 // At this stage the requested section is either after the last one or before the first one
 
-                if( sectionIndex < 0 && _this.currentSectionIndex === 0 ) { // Requested section is before the first one and the current section is the first one
+                // Actions if requested section is before the first one and the current section is the first one
+                if( sectionIndex < 0 && _this.currentSectionIndex === 0 ) {
 
                     // Test if a loop has been requested
                     if( loop ) {
@@ -210,7 +219,10 @@
                         });
                     }
 
-                } else if( sectionIndex >= _this.sections.length && _this.currentSectionIndex === _this.sections.length-1 ) { // Requested section is after the last one and the current section is the last one
+                }
+
+                // Actions if requested section is after the last one and the current section is the last one
+                else if( sectionIndex >= _this.sections.length && _this.currentSectionIndex === _this.sections.length-1 ) {
 
                     // Test if a loop has been requested
                     if( loop ) {
@@ -324,7 +336,7 @@
 
             hammerVS.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
 
-            hammerVS.on('swipeup', function() {   _this.next(); });
+            hammerVS.on('swipeup', function() { _this.next(); });
             hammerVS.on('swipedown', function() { _this.prev(); });
 
         }
