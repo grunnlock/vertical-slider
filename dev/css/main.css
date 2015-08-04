@@ -70,43 +70,6 @@ a {
   background-image: url('../images/img-5.jpg');
 }
 
-.vs-nav {
-  position: fixed;
-  z-index: 50;
-  top: 50%;
-  right: 3%;
-  bottom: auto;
-  display: block;
-
-  -webkit-transform: translateY(-50%);
-    -moz-transform: translateY(-50%);
-     -ms-transform: translateY(-50%);
-      -o-transform: translateY(-50%);
-         transform: translateY(-50%);
-}
-
-.vs-nav li:first-child {
-  margin-bottom: 20px;
-}
-
-.vs-nav a {
-  display: block;
-  width: 22px;
-  height: 25px;
-  text-indent: -9999px;
-  background: url('../images/icon-arrow.svg') no-repeat center center;
-}
-
-.vs-nav a.vs-prev {
-  margin-bottom: 10px;
-
-  -webkit-transform: rotate(180deg);
-    -moz-transform: rotate(180deg);
-     -ms-transform: rotate(180deg);
-      -o-transform: rotate(180deg);
-         transform: rotate(180deg);
-}
-
 footer {
   z-index: 9999;
   position: fixed;
