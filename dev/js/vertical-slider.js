@@ -19,7 +19,7 @@
                 bottom:     'vs_translateDown',
                 bounceDown: 'vs_bounceDown',
                 bounceUp:   'vs_bounceUp',
-                easing:     'easeInCubic',
+                easing:     [0.77, 0, 0.175, 1],
                 duration:   800
             },
 
@@ -343,56 +343,56 @@
 
     };
 
+    // Register Velocity effects
+    $.Velocity.RegisterEffect('vs_translateNone', {
+        defaultDuration: 1,
+        calls: [
+            [{ translateZ: 0, translateX: '0%', translateY: '0%' }, 1, { easing: defaults.animations.easing }]
+        ]
+    });
+
+    $.Velocity.RegisterEffect('vs_translateDown', {
+        defaultDuration: 1,
+        calls: [
+            [{ translateZ: 0, translateY: '100%' }, 1, { easing: defaults.animations.easing }]
+        ]
+    });
+
+    $.Velocity.RegisterEffect('vs_translateDown.half', {
+        defaultDuration: 1,
+        calls: [
+            [{ translateZ: 0, translateY: '50%' }, 1, { easing: defaults.animations.easing }]
+        ]
+    });
+
+    $.Velocity.RegisterEffect('vs_translateUp', {
+        defaultDuration: 1,
+        calls: [
+            [{ translateZ: 0, translateY: '-100%' }, 1, { easing: defaults.animations.easing }]
+        ]
+    });
+
+    $.Velocity.RegisterEffect('vs_translateUp.half', {
+        defaultDuration: 1,
+        calls: [
+            [{ translateZ: 0, translateY: '-50%' }, 1, { easing: defaults.animations.easing }]
+        ]
+    });
+
+    $.Velocity.RegisterEffect('vs_bounceDown', {
+        defaultDuration: 1,
+        calls: [
+            [{ translateZ: 0, translateY: '10%' }, 1, { easing: defaults.animations.easing }],
+            [{ translateZ: 0, translateY: '0%' }, 1, { easing: defaults.animations.easing }]
+        ]
+    });
+
+    $.Velocity.RegisterEffect('vs_bounceUp', {
+        defaultDuration: 1,
+        calls: [
+            [{ translateZ: 0, translateY: '-10%' }, 1, { easing: defaults.animations.easing }],
+            [{ translateZ: 0, translateY: '0%' }, 1, { easing: defaults.animations.easing }]
+        ]
+    });
+
 })( jQuery, window, document );
-
-// Register Velocity effects
-$.Velocity.RegisterEffect('vs_translateNone', {
-    defaultDuration: 1,
-    calls: [
-        [{ translateZ: 0, translateX: '0%', translateY: '0%' }, 1]
-    ]
-});
-
-$.Velocity.RegisterEffect('vs_translateDown', {
-    defaultDuration: 1,
-    calls: [
-        [{ translateZ: 0, translateY: '100%' }, 1]
-    ]
-});
-
-$.Velocity.RegisterEffect('vs_translateDown.half', {
-    defaultDuration: 1,
-    calls: [
-        [{ translateZ: 0, translateY: '50%' }, 1]
-    ]
-});
-
-$.Velocity.RegisterEffect('vs_translateUp', {
-    defaultDuration: 1,
-    calls: [
-        [{ translateZ: 0, translateY: '-100%' }, 1]
-    ]
-});
-
-$.Velocity.RegisterEffect('vs_translateUp.half', {
-    defaultDuration: 1,
-    calls: [
-        [{ translateZ: 0, translateY: '-50%' }, 1]
-    ]
-});
-
-$.Velocity.RegisterEffect('vs_bounceDown', {
-    defaultDuration: 1,
-    calls: [
-        [{ translateZ: 0, translateY: '10%' }, 1],
-        [{ translateZ: 0, translateY: '0%' }, 1]
-    ]
-});
-
-$.Velocity.RegisterEffect('vs_bounceUp', {
-    defaultDuration: 1,
-    calls: [
-        [{ translateZ: 0, translateY: '-10%' }, 1],
-        [{ translateZ: 0, translateY: '0%' }, 1]
-    ]
-});
