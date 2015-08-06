@@ -81,17 +81,15 @@
         });
 
         // Bind events
-        _this.bindEvents();
+        this.bindEvents();
 
         // Launch the autoplay if requested
-        if( _this.options.autoplay ) {
-            _this.autoplay();
+        if( this.options.autoplay ) {
+            this.autoplay();
         }
 
         // Callback
-        if( typeof( _this.options.afterInit ) !== 'undefined' ) {
-            _this.options.afterInit( _this.currentSection );
-        }
+        _this.options.afterInit( this.currentSection, this.sectionsNumber );
 
     };
 
@@ -116,7 +114,7 @@
         if( !this.animating && this.currentSection.index() !== sectionIndex ) {
 
             // Before move actions
-            this.options.beforeMove();
+            this.options.beforeMove( this.currentSection, this.sectionsNumber );
 
             // Test if the requested section is not before the first or after the last one
             if( sectionIndex > -1 && sectionIndex < _this.sectionsNumber ) {
@@ -193,7 +191,7 @@
                                 }
 
                                 // Callback
-                                _this.options.afterMove();
+                                _this.options.afterMove( _this.currentSection, _this.sectionsNumber );
                             }
                         });
 
@@ -253,7 +251,7 @@
                                 _this.animating = false;
 
                                 // Callback
-                                _this.options.afterMove();
+                                _this.options.afterMove( _this.currentSection, _this.sectionsNumber );
                             }
                         });
                     }
@@ -316,7 +314,7 @@
         });
 
         // Scroll with mousewheel actions
-        $( window ).on('scroll mousewheel wheel', function( event ) {
+        $( window ).on('mousewheel', function( event ) {
             // Check the scroll direction and move in consequence
             if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
                 if( Math.abs( event.deltaY ) >= _this.options.scrollThreshold ) {

@@ -23,16 +23,16 @@ jQuery( document ).ready(function( $ ) {
         },
 
         // Callback functions
-        afterInit: function() {
-			console.log('Vertical slider initialised.');
+        afterInit: function( currentSection, sectionsNumber ) {
+			console.log( 'afterInit: ' + currentSection + ' ' + sectionsNumber );
         },
 
-        beforeMove: function() {
-            console.log('Vertical slider will move.');
+        beforeMove: function( currentSection, sectionsNumber ) {
+            console.log( 'beforeMove: ' + currentSection + ' ' + sectionsNumber );
         },
 
-        afterMove: function() {
-        	console.log('Vertical slider moved.');
+        afterMove: function( currentSection, sectionsNumber ) {
+        	console.log( 'afterMove: ' + currentSection + ' ' + sectionsNumber );
         }
     });
 
