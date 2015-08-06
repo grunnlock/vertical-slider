@@ -41,7 +41,7 @@
         var _construct = function() {
 
             // Define options
-            Plugin.options   = $.extend( {}, defaults, options);
+            Plugin.options   = $.extend( {}, defaults, options );
             Plugin._defaults = defaults;
 
             // Transform the infoSelector to a jQuery object
@@ -390,17 +390,17 @@
     }
 
     // Add the plugin to jQuery.fn object
-    $.fn.verticalSlider = function(options) {
+    $.fn.verticalSlider = function( options ) {
         // Iterate through the DOM elements we are attaching the plugin to
         return this.each(function() {
             // If plugin has not already been attached to the element
-            if (undefined == $(this).data('verticalSlider')) {
+            if ( undefined == $( this ).data('verticalSlider') ) {
                 // Create a new instance of the plugin
-                var plugin = new $.verticalSlider(this, options);
+                var plugin = new $.verticalSlider( this, options );
                 // Store a reference to the plugin object
-                $(this).data('verticalSlider', plugin);
+                $( this ).data( 'verticalSlider', plugin );
             }
         });
     }
 
-})(jQuery);
+})( jQuery );
