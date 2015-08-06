@@ -1,8 +1,10 @@
-;(function ( $, window, document, undefined ) {
+;(function( $ ) {
 
-    // Create the defaults once
-    var pluginName = 'verticalSlider',
-        defaults   = {
+    // here we go!
+    $.verticalSlider = function( sectionsContainer, options ) {
+
+        // this is private property and is  accessible only from inside the plugin
+        var defaults = {
             scrollThreshold: 20,
 
             // Element on which informational classes will be put (current section index, last section...)
@@ -29,382 +31,384 @@
             afterMove: function( currentSection, sectionsNumber ) { return false; }
         };
 
-    // Plugin constructor
-    function Plugin( sectionsContainer, options ) {
-
-        // Define vertical slider container
-        this.sectionsContainer = $( sectionsContainer );
-
-        // Define options
-        this.options   = $.extend( {}, defaults, options);
-        this._defaults = defaults;
-        this._name     = pluginName;
-
-        // Global variables
-        this.animating            = false;
-        this.sections             = $('.vs-section');
-        this.sectionsNumber       = this.sections.length;
-        this.currentSection       = this.sections.filter('.active');
-        this.currentSectionIndex  = $( this.currentSection ).index();
-        this.options.infoSelector = $( this.options.infoSelector );
-
-        // Initialise the plugin
-        this.init();
-
-    }
-
-    // Constructor wrapper to prevent multiple instantiations
-    $.fn[ pluginName ] = function ( options ) {
-        return this.each(function () {
-            if ( ! $.data( this, 'plugin_' + pluginName ) ) {
-                $.data( this, 'plugin_' + pluginName, new Plugin( this, options ) );
-            }
-        });
-    };
-
-    // Initialise the plugin
-    Plugin.prototype.init = function () {
-
-        var _this = this;
-
-        // Position sections (except the current section)
-        this.sections.filter(function( i ) {
-            return i !== _this.currentSectionIndex;
-        }).velocity( _this.options.animations.bottom, 0 );
-
-        // Add informational classes
-        this.updateInfoClasses( _this.currentSection );
-
-        // Add sections numbers
-        this.sections.each(function( n ) {
-            $( this ).addClass( 'vs-section-' + n );
-        });
-
-        // Bind events
-        this.bindEvents();
-
-        // Launch the autoplay if requested
-        if( this.options.autoplay ) {
-            this.autoplay();
-        }
-
-        // Callback
-        _this.options.afterInit( this.currentSection, this.sectionsNumber );
-
-    };
-
-    Plugin.prototype.prev = function( loop ) {
-        // All tests will be done in the moveTo function
-        this.moveTo( this.currentSectionIndex-1, loop );
-    };
-
-    Plugin.prototype.next = function( loop ) {
-        // All tests will be done in the moveTo function
-        this.moveTo( this.currentSectionIndex+1, loop );
-    };
-
-    Plugin.prototype.moveTo = function( sectionIndex, loop ) {
-
-        var _this = this;
-
-        var nextSection;
-        var animation;
-
-        // Test the slider is not already moving and the requested section is not the current one
-        if( !this.animating && this.currentSection.index() !== sectionIndex ) {
-
-            // Before move actions
-            this.options.beforeMove( this.currentSection, this.sectionsNumber );
-
-            // Test if the requested section is not before the first or after the last one
-            if( sectionIndex > -1 && sectionIndex < _this.sectionsNumber ) {
-
-                // Lock vertical slider
-                _this.animating = true;
-
-                // Define next section
-                nextSection = _this.sections.eq( sectionIndex );
-
-                // Actions if requested section is after the current one
-                if( sectionIndex > _this.currentSectionIndex ) {
-
-                    // Define animations
-                    animation        = 'vs_translateUp.half';
-                    animationEnd     = 'vs_translateUp';
-                    animationReverse = 'vs_translateDown';
-
-                }
-
-                // Actions if requested section is before the current one
-                else {
-
-                    // Define animations
-                    animation        = 'vs_translateDown.half';
-                    animationEnd     = 'vs_translateDown';
-                    animationReverse = 'vs_translateUp';
-
-                }
-
-                // Update informational classes
-                _this.updateInfoClasses( nextSection );
-
-                // Position next section
-                nextSection.addClass('active').velocity( animationReverse, {
-                    duration: 0,
-                    queue: false,
-                    easing: _this.options.animations.easing,
-
-                    complete: function() {
-
-                        // Move out current section
-                        _this.currentSection.removeClass('active').velocity(animation, {
-                            duration: _this.options.animations.duration,
-                            easing: _this.options.animations.easing,
-                            queue: false,
-
-                            complete: function() {
-                                // Reset section
-                                _this.currentSection.velocity(_this.options.animations.bottom, {
-                                    duration: 0,
-                                    queue: false
-                                });
-                            }
-                        });
-
-                        // Move in next section
-                        nextSection.velocity('vs_translateNone', {
-                            duration: _this.options.animations.duration,
-                            easing: _this.options.animations.easing,
-                            queue: false,
-
-                            complete: function() {
-                                // Unlock vertical slider
-                                _this.animating = false;
-
-                                // Update other variables
-                                _this.currentSection      = nextSection;
-                                _this.currentSectionIndex = nextSection.index();
-
-                                // Reset autoplay timer if requested
-                                if( _this.options.autoplay ) {
-                                    _this.autoplay();
-                                }
-
-                                // Callback
-                                _this.options.afterMove( _this.currentSection, _this.sectionsNumber );
-                            }
-                        });
-
-                    }
-                });
-
-            } else {
-
-                // At this stage the requested section is either after the last one or before the first one
-
-                // Actions if requested section is before the first one and the current section is the first one
-                if( sectionIndex < 0 && _this.currentSectionIndex === 0 ) {
-
-                    // Test if a loop has been requested
-                    if( loop ) {
-                        // Move to the last section
-                        _this.moveTo( _this.sectionsNumber-1, '', true );
-                    } else {
-                        // Lock vertical slider
-                        _this.animating = true;
-
-                        // If not do the bouncing animation
-                        _this.currentSection.velocity(_this.options.animations.bounceDown, {
-                            duration: _this.options.animations.duration/2,
-                            easing: _this.options.animations.easing,
-
-                            complete: function() {
-                                // Unlock vertical slider
-                                _this.animating = false;
-
-                                // Callback
-                                _this.options.afterMove();
-                            }
-                        });
-                    }
-
-                }
-
-                // Actions if requested section is after the last one and the current section is the last one
-                else if( sectionIndex >= _this.sectionsNumber && _this.currentSectionIndex === _this.sectionsNumber-1 ) {
-
-                    // Test if a loop has been requested
-                    if( loop ) {
-                        // Move to the first section
-                        _this.moveTo(0, '', true);
-                    } else {
-                        // Lock vertical slider
-                        _this.animating = true;
-
-                        // If not do the bouncing animation
-                        _this.currentSection.velocity(_this.options.animations.bounceUp, {
-                            duration: _this.options.animations.duration/2,
-                            easing: _this.options.animations.easing,
-
-                            complete: function() {
-                                // Unlock vertical slider
-                                _this.animating = false;
-
-                                // Callback
-                                _this.options.afterMove( _this.currentSection, _this.sectionsNumber );
-                            }
-                        });
-                    }
-
-                }
-
-            }
-
-        }
-
-    };
-
-    Plugin.prototype.autoplay = function() {
-
-        var _this = this;
-
-        // Clear previous timer
-        clearTimeout( this.autoplayTimer );
-
-        // Set a new timer
-        this.autoplayTimer = setTimeout(function() {
-            _this.next(true);
-        }, _this.options.autoplayDuration );
-
-    };
-
-    Plugin.prototype.updateInfoClasses = function( section ) {
-
-        var _this = this;
-
-        // Remove all informational classes using the prefix "vs-active-section-"
-        this.options.infoSelector.removeClass(function ( index, css ) {
-            return ( css.match (/\bvs-active-section-\S+/g) || [] ).join(' ');
-        });
-
-        // Remove class indicating the current section is the first and/or the last one
-        // And add a class indicating the current section number
-        this.options.infoSelector.addClass( 'vs-active-section-' + section.index() );
-
-        // Test if the section is the first one
-        if( section.index() === 0 ) {
-            this.options.infoSelector.addClass('vs-active-section-first');
-        }
-
-        // Test if the section is the last one
-        if( section.index() === _this.sectionsNumber - 1 ) {
-            this.options.infoSelector.addClass('vs-active-section-last');
-        }
-
-    };
-
-    Plugin.prototype.bindEvents = function() {
-
-        var _this = this;
-        var delta = 0;
-
-        // Resize sections on window resize
-        $( window ).on('resize', function() {
-            _this.sectionsContainer.height( $( window ).height() );
-        });
-
-        // Scroll with mousewheel actions
-        $( window ).on('mousewheel', function( event ) {
-            // Check the scroll direction and move in consequence
-            if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
-                if( Math.abs( event.deltaY ) >= _this.options.scrollThreshold ) {
-                    _this.prev();
-                }
-            } else {
-                if( Math.abs( event.deltaY ) >= _this.options.scrollThreshold ) {
-                    _this.next();
-                }
-            }
-        });
-
-        // Keyboard arrows actions
-        $( window ).on('keyup', function( event ) {
-            if( event.which === 40 ) {
-                _this.next();
-            } else if( event.which === 38 ) {
-                _this.prev();
-            }
-        });
-
-        // Events for devices which support touch events
-        if( Modernizr.touch ) {
-
-            // Hammer.js
-
-            // Swipe gesture
-            var hammerVS = new Hammer($('html')[0], {
-                threshold: 1
+        // to avoid confusions, use "Plugin" to reference the
+        // current instance of the object
+        var Plugin = this;
+
+        // this will hold the merged default, and user-provided options
+        // plugin's properties will be available through this object like:
+        // plugin.settings.propertyName from inside the plugin or
+        // element.data('verticalSlider').settings.propertyName from outside the plugin,
+        // where "element" is the element the plugin is attached to;
+        Plugin.settings = {};
+
+        // The "constructor" method that gets called when the object is created
+        Plugin._construct = function() {
+
+            // the plugin's final properties are the merged default and
+            // user-provided options (if any)
+            Plugin.settings = $.extend({}, defaults, options);
+
+            // Define vertical slider container
+            Plugin.sectionsContainer = $( sectionsContainer );
+
+            // Define options
+            Plugin.options   = $.extend( {}, defaults, options);
+            Plugin._defaults = defaults;
+
+            // Global variables
+            Plugin.animating            = false;
+            Plugin.sections             = $('.vs-section');
+            Plugin.sectionsNumber       = Plugin.sections.length;
+            Plugin.currentSection       = Plugin.sections.filter('.active');
+            Plugin.currentSectionIndex  = $( Plugin.currentSection ).index();
+            Plugin.options.infoSelector = $( Plugin.options.infoSelector );
+
+            // Position sections (except the current section)
+            Plugin.sections.filter(function( i ) {
+                return i !== Plugin.currentSectionIndex;
+            }).velocity( Plugin.options.animations.bottom, 0 );
+
+            // Add informational classes
+            Plugin.updateInfoClasses( Plugin.currentSection );
+
+            // Add sections numbers
+            Plugin.sections.each(function( n ) {
+                $( this ).addClass( 'vs-section-' + n );
             });
 
-            hammerVS.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
+            // Bind events
+            bindEvents();
 
-            hammerVS.on('swipeup', function() { _this.next(); });
-            hammerVS.on('swipedown', function() { _this.prev(); });
+            // Launch the autoplay if requested
+            if( Plugin.options.autoplay ) {
+                Plugin.autoplay();
+            }
+
+            // Callback
+            Plugin.options.afterInit( Plugin.currentSection, Plugin.sectionsNumber );
 
         }
 
-    };
+        Plugin.prev = function( loop ) {
+            // All tests will be done in the moveTo function
+            Plugin.moveTo( Plugin.currentSectionIndex-1, loop );
+        };
 
-    // Register Velocity effects
-    $.Velocity.RegisterEffect('vs_translateNone', {
-        defaultDuration: 1,
-        calls: [
-            [{ translateZ: 0, translateX: '0%', translateY: '0%' }, 1, { easing: defaults.animations.easing }]
-        ]
-    });
+        Plugin.next = function( loop ) {
+            // All tests will be done in the moveTo function
+            Plugin.moveTo( Plugin.currentSectionIndex+1, loop );
+        };
 
-    $.Velocity.RegisterEffect('vs_translateDown', {
-        defaultDuration: 1,
-        calls: [
-            [{ translateZ: 0, translateY: '100%' }, 1, { easing: defaults.animations.easing }]
-        ]
-    });
+        Plugin.moveTo = function( sectionIndex, loop ) {
+            var nextSection;
+            var animation;
 
-    $.Velocity.RegisterEffect('vs_translateDown.half', {
-        defaultDuration: 1,
-        calls: [
-            [{ translateZ: 0, translateY: '50%' }, 1, { easing: defaults.animations.easing }]
-        ]
-    });
+            // Test the slider is not already moving and the requested section is not the current one
+            if( !Plugin.animating && Plugin.currentSection.index() !== sectionIndex ) {
 
-    $.Velocity.RegisterEffect('vs_translateUp', {
-        defaultDuration: 1,
-        calls: [
-            [{ translateZ: 0, translateY: '-100%' }, 1, { easing: defaults.animations.easing }]
-        ]
-    });
+                // Before move actions
+                Plugin.options.beforeMove( Plugin.currentSection, Plugin.sectionsNumber );
 
-    $.Velocity.RegisterEffect('vs_translateUp.half', {
-        defaultDuration: 1,
-        calls: [
-            [{ translateZ: 0, translateY: '-50%' }, 1, { easing: defaults.animations.easing }]
-        ]
-    });
+                // Test if the requested section is not before the first or after the last one
+                if( sectionIndex > -1 && sectionIndex < Plugin.sectionsNumber ) {
 
-    $.Velocity.RegisterEffect('vs_bounceDown', {
-        defaultDuration: 1,
-        calls: [
-            [{ translateZ: 0, translateY: '10%' }, 1, { easing: defaults.animations.easing }],
-            [{ translateZ: 0, translateY: '0%' }, 1, { easing: defaults.animations.easing }]
-        ]
-    });
+                    // Lock vertical slider
+                    Plugin.animating = true;
 
-    $.Velocity.RegisterEffect('vs_bounceUp', {
-        defaultDuration: 1,
-        calls: [
-            [{ translateZ: 0, translateY: '-10%' }, 1, { easing: defaults.animations.easing }],
-            [{ translateZ: 0, translateY: '0%' }, 1, { easing: defaults.animations.easing }]
-        ]
-    });
+                    // Define next section
+                    nextSection = Plugin.sections.eq( sectionIndex );
 
-})( jQuery, window, document );
+                    // Actions if requested section is after the current one
+                    if( sectionIndex > Plugin.currentSectionIndex ) {
+
+                        // Define animations
+                        animation        = 'vs_translateUp.half';
+                        animationEnd     = 'vs_translateUp';
+                        animationReverse = 'vs_translateDown';
+
+                    }
+
+                    // Actions if requested section is before the current one
+                    else {
+
+                        // Define animations
+                        animation        = 'vs_translateDown.half';
+                        animationEnd     = 'vs_translateDown';
+                        animationReverse = 'vs_translateUp';
+
+                    }
+
+                    // Update informational classes
+                    Plugin.updateInfoClasses( nextSection );
+
+                    // Position next section
+                    nextSection.addClass('active').velocity( animationReverse, {
+                        duration: 0,
+                        queue: false,
+                        easing: Plugin.options.animations.easing,
+
+                        complete: function() {
+
+                            // Move out current section
+                            Plugin.currentSection.removeClass('active').velocity(animation, {
+                                duration: Plugin.options.animations.duration,
+                                easing: Plugin.options.animations.easing,
+                                queue: false,
+
+                                complete: function() {
+                                    // Reset section
+                                    Plugin.currentSection.velocity(Plugin.options.animations.bottom, {
+                                        duration: 0,
+                                        queue: false
+                                    });
+                                }
+                            });
+
+                            // Move in next section
+                            nextSection.velocity('vs_translateNone', {
+                                duration: Plugin.options.animations.duration,
+                                easing: Plugin.options.animations.easing,
+                                queue: false,
+
+                                complete: function() {
+                                    // Unlock vertical slider
+                                    Plugin.animating = false;
+
+                                    // Update other variables
+                                    Plugin.currentSection      = nextSection;
+                                    Plugin.currentSectionIndex = nextSection.index();
+
+                                    // Reset autoplay timer if requested
+                                    if( Plugin.options.autoplay ) {
+                                        Plugin.autoplay();
+                                    }
+
+                                    // Callback
+                                    Plugin.options.afterMove( Plugin.currentSection, Plugin.sectionsNumber );
+                                }
+                            });
+
+                        }
+                    });
+
+                } else {
+
+                    // At this stage the requested section is either after the last one or before the first one
+
+                    // Actions if requested section is before the first one and the current section is the first one
+                    if( sectionIndex < 0 && Plugin.currentSectionIndex === 0 ) {
+
+                        // Test if a loop has been requested
+                        if( loop ) {
+                            // Move to the last section
+                            Plugin.moveTo( Plugin.sectionsNumber-1, '', true );
+                        } else {
+                            // Lock vertical slider
+                            Plugin.animating = true;
+
+                            // If not do the bouncing animation
+                            Plugin.currentSection.velocity(Plugin.options.animations.bounceDown, {
+                                duration: Plugin.options.animations.duration/2,
+                                easing: Plugin.options.animations.easing,
+
+                                complete: function() {
+                                    // Unlock vertical slider
+                                    Plugin.animating = false;
+
+                                    // Callback
+                                    Plugin.options.afterMove();
+                                }
+                            });
+                        }
+
+                    }
+
+                    // Actions if requested section is after the last one and the current section is the last one
+                    else if( sectionIndex >= Plugin.sectionsNumber && Plugin.currentSectionIndex === Plugin.sectionsNumber-1 ) {
+
+                        // Test if a loop has been requested
+                        if( loop ) {
+                            // Move to the first section
+                            Plugin.moveTo(0, '', true);
+                        } else {
+                            // Lock vertical slider
+                            Plugin.animating = true;
+
+                            // If not do the bouncing animation
+                            Plugin.currentSection.velocity(Plugin.options.animations.bounceUp, {
+                                duration: Plugin.options.animations.duration/2,
+                                easing: Plugin.options.animations.easing,
+
+                                complete: function() {
+                                    // Unlock vertical slider
+                                    Plugin.animating = false;
+
+                                    // Callback
+                                    Plugin.options.afterMove( Plugin.currentSection, Plugin.sectionsNumber );
+                                }
+                            });
+                        }
+
+                    }
+
+                }
+
+            }
+
+        };
+
+        Plugin.autoplay = function() {
+            // Clear previous timer
+            clearTimeout( Plugin.autoplayTimer );
+
+            // Set a new timer
+            Plugin.autoplayTimer = setTimeout(function() {
+                Plugin.next(true);
+            }, Plugin.options.autoplayDuration );
+        };
+
+        Plugin.updateInfoClasses = function( section ) {
+            // Remove all informational classes using the prefix "vs-active-section-"
+            Plugin.options.infoSelector.removeClass(function ( index, css ) {
+                return ( css.match (/\bvs-active-section-\S+/g) || [] ).join(' ');
+            });
+
+            // Remove class indicating the current section is the first and/or the last one
+            // And add a class indicating the current section number
+            Plugin.options.infoSelector.addClass( 'vs-active-section-' + section.index() );
+
+            // Test if the section is the first one
+            if( section.index() === 0 ) {
+                Plugin.options.infoSelector.addClass('vs-active-section-first');
+            }
+
+            // Test if the section is the last one
+            if( section.index() === Plugin.sectionsNumber - 1 ) {
+                Plugin.options.infoSelector.addClass('vs-active-section-last');
+            }
+        };
+
+        // a private method. for demonstration purposes only - remove it!
+        var bindEvents = function() {
+            var delta = 0;
+
+            // Resize sections on window resize
+            $( window ).on('resize', function() {
+                Plugin.sectionsContainer.height( $( window ).height() );
+            });
+
+            // Scroll with mousewheel actions
+            $( window ).on('mousewheel', function( event ) {
+                // Check the scroll direction and move in consequence
+                if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
+                    if( Math.abs( event.deltaY ) >= Plugin.options.scrollThreshold ) {
+                        Plugin.prev();
+                    }
+                } else {
+                    if( Math.abs( event.deltaY ) >= Plugin.options.scrollThreshold ) {
+                        Plugin.next();
+                    }
+                }
+            });
+
+            // Keyboard arrows actions
+            $( window ).on('keyup', function( event ) {
+                if( event.which === 40 ) {
+                    Plugin.next();
+                } else if( event.which === 38 ) {
+                    Plugin.prev();
+                }
+            });
+
+            // Events for devices which support touch events
+            if( Modernizr.touch ) {
+
+                // Hammer.js
+
+                // Swipe gesture
+                var hammerVS = new Hammer($('html')[0], {
+                    threshold: 1
+                });
+
+                hammerVS.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
+
+                hammerVS.on('swipeup', function() { Plugin.next(); });
+                hammerVS.on('swipedown', function() { Plugin.prev(); });
+
+            }
+
+        };
+
+        // Register Velocity effects
+        $.Velocity.RegisterEffect('vs_translateNone', {
+            defaultDuration: 1,
+            calls: [
+                [{ translateZ: 0, translateX: '0%', translateY: '0%' }, 1, { easing: defaults.animations.easing }]
+            ]
+        });
+
+        $.Velocity.RegisterEffect('vs_translateDown', {
+            defaultDuration: 1,
+            calls: [
+                [{ translateZ: 0, translateY: '100%' }, 1, { easing: defaults.animations.easing }]
+            ]
+        });
+
+        $.Velocity.RegisterEffect('vs_translateDown.half', {
+            defaultDuration: 1,
+            calls: [
+                [{ translateZ: 0, translateY: '50%' }, 1, { easing: defaults.animations.easing }]
+            ]
+        });
+
+        $.Velocity.RegisterEffect('vs_translateUp', {
+            defaultDuration: 1,
+            calls: [
+                [{ translateZ: 0, translateY: '-100%' }, 1, { easing: defaults.animations.easing }]
+            ]
+        });
+
+        $.Velocity.RegisterEffect('vs_translateUp.half', {
+            defaultDuration: 1,
+            calls: [
+                [{ translateZ: 0, translateY: '-50%' }, 1, { easing: defaults.animations.easing }]
+            ]
+        });
+
+        $.Velocity.RegisterEffect('vs_bounceDown', {
+            defaultDuration: 1,
+            calls: [
+                [{ translateZ: 0, translateY: '10%' }, 1, { easing: defaults.animations.easing }],
+                [{ translateZ: 0, translateY: '0%' }, 1, { easing: defaults.animations.easing }]
+            ]
+        });
+
+        $.Velocity.RegisterEffect('vs_bounceUp', {
+            defaultDuration: 1,
+            calls: [
+                [{ translateZ: 0, translateY: '-10%' }, 1, { easing: defaults.animations.easing }],
+                [{ translateZ: 0, translateY: '0%' }, 1, { easing: defaults.animations.easing }]
+            ]
+        });
+
+        // Call the "constructor" method
+        Plugin._construct();
+    }
+
+    // add the plugin to the jQuery.fn object
+    $.fn.verticalSlider = function(options) {
+        // iterate through the DOM elements we are attaching the plugin to
+        return this.each(function() {
+            // if plugin has not already been attached to the element
+            if (undefined == $(this).data('verticalSlider')) {
+                // create a new instance of the plugin
+                // pass the DOM element and the user-provided options as arguments
+                var plugin = new $.verticalSlider(this, options);
+                // Store a reference to the plugin object
+                $(this).data('verticalSlider', plugin);
+            }
+        });
+    }
+
+})(jQuery);
