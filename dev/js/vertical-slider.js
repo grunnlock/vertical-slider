@@ -1,8 +1,8 @@
 ;(function ( $, window, document, undefined ) {
 
     // Create the defaults once
-    var pluginName     = 'verticalSlider',
-        defaults       = {
+    var pluginName = 'verticalSlider',
+        defaults   = {
             scrollThreshold: 20,
 
             // Element on which informational classes will be put (current section index, last section...)
@@ -24,8 +24,9 @@
             },
 
             // Callback functions
-            afterInit: function() { return false; },
-            afterMove: function() { return false; }
+            afterInit: function( currentSection, sectionsNumber  ) { return false; },
+            beforeMove: function( currentSection, sectionsNumber ) {},
+            afterMove: function( currentSection, sectionsNumber ) { return false; }
         };
 
     // Plugin constructor
@@ -42,6 +43,7 @@
         // Global variables
         this.animating            = false;
         this.sections             = $('.vs-section');
+        this.sectionsNumber       = this.sections.length;
         this.currentSection       = this.sections.filter('.active');
         this.currentSectionIndex  = $( this.currentSection ).index();
         this.options.infoSelector = $( this.options.infoSelector );
@@ -113,8 +115,11 @@
         // Test the slider is not already moving and the requested section is not the current one
         if( !this.animating && this.currentSection.index() !== sectionIndex ) {
 
+            // Before move actions
+            this.options.beforeMove();
+
             // Test if the requested section is not before the first or after the last one
-            if( sectionIndex > -1 && sectionIndex < _this.sections.length ) {
+            if( sectionIndex > -1 && sectionIndex < _this.sectionsNumber ) {
 
                 // Lock vertical slider
                 _this.animating = true;
@@ -186,6 +191,9 @@
                                 if( _this.options.autoplay ) {
                                     _this.autoplay();
                                 }
+
+                                // Callback
+                                _this.options.afterMove();
                             }
                         });
 
@@ -202,7 +210,7 @@
                     // Test if a loop has been requested
                     if( loop ) {
                         // Move to the last section
-                        _this.moveTo( _this.sections.length - 1, '', true );
+                        _this.moveTo( _this.sectionsNumber-1, '', true );
                     } else {
                         // Lock vertical slider
                         _this.animating = true;
@@ -215,6 +223,9 @@
                             complete: function() {
                                 // Unlock vertical slider
                                 _this.animating = false;
+
+                                // Callback
+                                _this.options.afterMove();
                             }
                         });
                     }
@@ -222,7 +233,7 @@
                 }
 
                 // Actions if requested section is after the last one and the current section is the last one
-                else if( sectionIndex >= _this.sections.length && _this.currentSectionIndex === _this.sections.length-1 ) {
+                else if( sectionIndex >= _this.sectionsNumber && _this.currentSectionIndex === _this.sectionsNumber-1 ) {
 
                     // Test if a loop has been requested
                     if( loop ) {
@@ -240,6 +251,9 @@
                             complete: function() {
                                 // Unlock vertical slider
                                 _this.animating = false;
+
+                                // Callback
+                                _this.options.afterMove();
                             }
                         });
                     }
@@ -285,7 +299,7 @@
         }
 
         // Test if the section is the last one
-        if( section.index() === _this.sections.length - 1 ) {
+        if( section.index() === _this.sectionsNumber - 1 ) {
             this.options.infoSelector.addClass('vs-active-section-last');
         }
 

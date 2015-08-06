@@ -27,6 +27,10 @@ jQuery( document ).ready(function( $ ) {
 			console.log('Vertical slider initialised.');
         },
 
+        beforeMove: function() {
+            console.log('Vertical slider will move.');
+        },
+
         afterMove: function() {
         	console.log('Vertical slider moved.');
         }
