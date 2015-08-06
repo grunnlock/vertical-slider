@@ -95,12 +95,12 @@
 
     Plugin.prototype.prev = function( loop ) {
         // All tests will be done in the moveTo function
-        this.moveTo( this.currentSection.index()-1, loop );
+        this.moveTo( this.currentSectionIndex-1, loop );
     };
 
     Plugin.prototype.next = function( loop ) {
         // All tests will be done in the moveTo function
-        this.moveTo( this.currentSection.index()+1, loop );
+        this.moveTo( this.currentSectionIndex+1, loop );
     };
 
     Plugin.prototype.moveTo = function( sectionIndex, loop ) {
