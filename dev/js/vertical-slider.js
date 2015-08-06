@@ -55,6 +55,11 @@
             Plugin.currentSection       = Plugin.sections.filter('.active');
             Plugin.currentSectionIndex  = $( Plugin.currentSection ).index();
 
+            if( Modernizr.mq('only screen and (max-width: 1200px)') ) {
+                // Change vh to px value on mobile and tablets
+                Plugin.sectionsContainer.height( $( window ).height() );
+            }
+
             // Position sections (except the current section)
             Plugin.sections.filter(function( i ) {
                 return i !== Plugin.currentSectionIndex;
