@@ -252,6 +252,9 @@
         };
 
         Plugin.autoplay = function() {
+            // Update autoplay to true
+            Plugin.options.autoplay = true;
+
             // Clear previous timer
             clearTimeout( Plugin.autoplayTimer );
 
