@@ -3,7 +3,7 @@
     // here we go!
     $.verticalSlider = function( sectionsContainer, options ) {
 
-        // this is private property and is  accessible only from inside the plugin
+        // Default options
         var defaults = {
             scrollThreshold: 20,
 
@@ -16,13 +16,13 @@
 
             // Settings for the moveTo function animation
             animations: {
-                visible:    'vs_translateNone',
-                top:        'vs_translateUp.half',
-                bottom:     'vs_translateDown',
+                visible: 'vs_translateNone',
+                top: 'vs_translateUp.half',
+                bottom: 'vs_translateDown',
                 bounceDown: 'vs_bounceDown',
-                bounceUp:   'vs_bounceUp',
-                easing:     [0.77, 0, 0.175, 1],
-                duration:   800
+                bounceUp: 'vs_bounceUp',
+                easing: [0.77, 0, 0.175, 1],
+                duration: 800
             },
 
             // Callback functions
@@ -31,38 +31,29 @@
             afterMove: function( currentSection, sectionsNumber ) { return false; }
         };
 
-        // to avoid confusions, use "Plugin" to reference the
-        // current instance of the object
+        // Create an object usable to target the plugin's object
         var Plugin = this;
 
-        // this will hold the merged default, and user-provided options
-        // plugin's properties will be available through this object like:
-        // plugin.settings.propertyName from inside the plugin or
-        // element.data('verticalSlider').settings.propertyName from outside the plugin,
-        // where "element" is the element the plugin is attached to;
+        // Define options
         Plugin.settings = {};
 
         // The "constructor" method that gets called when the object is created
-        Plugin._construct = function() {
-
-            // the plugin's final properties are the merged default and
-            // user-provided options (if any)
-            Plugin.settings = $.extend({}, defaults, options);
-
-            // Define vertical slider container
-            Plugin.sectionsContainer = $( sectionsContainer );
+        var _construct = function() {
 
             // Define options
             Plugin.options   = $.extend( {}, defaults, options);
             Plugin._defaults = defaults;
 
+            // Transform the infoSelector to a jQuery object
+            Plugin.options.infoSelector = $( Plugin.options.infoSelector );
+
             // Global variables
             Plugin.animating            = false;
+            Plugin.sectionsContainer    = $( sectionsContainer );
             Plugin.sections             = $('.vs-section');
             Plugin.sectionsNumber       = Plugin.sections.length;
             Plugin.currentSection       = Plugin.sections.filter('.active');
             Plugin.currentSectionIndex  = $( Plugin.currentSection ).index();
-            Plugin.options.infoSelector = $( Plugin.options.infoSelector );
 
             // Position sections (except the current section)
             Plugin.sections.filter(function( i ) {
@@ -70,7 +61,7 @@
             }).velocity( Plugin.options.animations.bottom, 0 );
 
             // Add informational classes
-            Plugin.updateInfoClasses( Plugin.currentSection );
+            _updateInfoClasses( Plugin.currentSection );
 
             // Add sections numbers
             Plugin.sections.each(function( n ) {
@@ -78,7 +69,7 @@
             });
 
             // Bind events
-            bindEvents();
+            _bindEvents();
 
             // Launch the autoplay if requested
             if( Plugin.options.autoplay ) {
@@ -90,11 +81,13 @@
 
         }
 
+        // Go to previous section
         Plugin.prev = function( loop ) {
             // All tests will be done in the moveTo function
             Plugin.moveTo( Plugin.currentSectionIndex-1, loop );
         };
 
+        // Go to next section
         Plugin.next = function( loop ) {
             // All tests will be done in the moveTo function
             Plugin.moveTo( Plugin.currentSectionIndex+1, loop );
@@ -104,7 +97,7 @@
             var nextSection;
             var animation;
 
-            // Test the slider is not already moving and the requested section is not the current one
+            // Test if the slider is not already moving and the requested section is not the current one
             if( !Plugin.animating && Plugin.currentSection.index() !== sectionIndex ) {
 
                 // Before move actions
@@ -140,7 +133,7 @@
                     }
 
                     // Update informational classes
-                    Plugin.updateInfoClasses( nextSection );
+                    _updateInfoClasses( nextSection );
 
                     // Position next section
                     nextSection.addClass('active').velocity( animationReverse, {
@@ -268,7 +261,7 @@
             }, Plugin.options.autoplayDuration );
         };
 
-        Plugin.updateInfoClasses = function( section ) {
+        var _updateInfoClasses = function( section ) {
             // Remove all informational classes using the prefix "vs-active-section-"
             Plugin.options.infoSelector.removeClass(function ( index, css ) {
                 return ( css.match (/\bvs-active-section-\S+/g) || [] ).join(' ');
@@ -290,7 +283,7 @@
         };
 
         // a private method. for demonstration purposes only - remove it!
-        var bindEvents = function() {
+        var _bindEvents = function() {
             var delta = 0;
 
             // Resize sections on window resize
@@ -393,17 +386,16 @@
         });
 
         // Call the "constructor" method
-        Plugin._construct();
+        _construct();
     }
 
-    // add the plugin to the jQuery.fn object
+    // Add the plugin to jQuery.fn object
     $.fn.verticalSlider = function(options) {
-        // iterate through the DOM elements we are attaching the plugin to
+        // Iterate through the DOM elements we are attaching the plugin to
         return this.each(function() {
-            // if plugin has not already been attached to the element
+            // If plugin has not already been attached to the element
             if (undefined == $(this).data('verticalSlider')) {
-                // create a new instance of the plugin
-                // pass the DOM element and the user-provided options as arguments
+                // Create a new instance of the plugin
                 var plugin = new $.verticalSlider(this, options);
                 // Store a reference to the plugin object
                 $(this).data('verticalSlider', plugin);

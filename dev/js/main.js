@@ -36,4 +36,12 @@ jQuery( document ).ready(function( $ ) {
         }
     });
 
+    // Store the instance in a variable
+    var demoSlider = $('#demo-slider').data('verticalSlider');
+
+    // All the next functions are now usable using the demoSlider instance
+    // demoSlider.next();
+    // demoSlider.prev();
+    // demoSlider.moveTo(3);
+
 });
