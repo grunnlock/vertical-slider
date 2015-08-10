@@ -50,10 +50,10 @@
             // Global variables
             Plugin.animating            = false;
             Plugin.sectionsContainer    = $( sectionsContainer );
-            Plugin.sections             = $('.vs-section');
+            Plugin.sections             = Plugin.sectionsContainer.children('.vs-section');
             Plugin.sectionsNumber       = Plugin.sections.length;
             Plugin.currentSection       = Plugin.sections.filter('.active');
-            Plugin.currentSectionIndex  = $( Plugin.currentSection ).index();
+            Plugin.currentSectionIndex  = Plugin.currentSection.index();
 
             if( Modernizr.mq('only screen and (max-width: 1200px)') ) {
                 // Change vh to px value on mobile and tablets
