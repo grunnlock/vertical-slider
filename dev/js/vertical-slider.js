@@ -300,7 +300,7 @@
             });
 
             // Scroll with mousewheel actions
-            $( window ).on('mousewheel', function( event ) {
+            Plugin.sectionsContainer.on('mousewheel', function( event ) {
                 // Check the scroll direction and move in consequence
                 if ( event.originalEvent.detail < 0 || event.originalEvent.wheelDelta > 0 ) {
                     if( Math.abs( event.deltaY ) >= Plugin.options.scrollThreshold ) {
