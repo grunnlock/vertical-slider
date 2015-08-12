@@ -14,16 +14,16 @@
             autoplay: false,
             autoplayDuration: 6000,
 
-            // Settings for the moveTo function animation
-            animations: {
-                visible: 'vs_translateNone',
-                top: 'vs_translateUp.half',
-                bottom: 'vs_translateDown',
-                bounceDown: 'vs_bounceDown',
-                bounceUp: 'vs_bounceUp',
-                easing: [0.77, 0, 0.175, 1],
-                duration: 800
-            },
+            // Animations settings
+            animVisible: 'vs_translateNone',
+            animUp: 'vs_translateUp',
+            animUpHalf: 'vs_translateUp.half',
+            animBottom: 'vs_translateDown',
+            animBottomHalf: 'vs_translateDown.half',
+            animBounceUp: 'vs_bounceUp',
+            animBounceDown: 'vs_bounceDown',
+            animEasing: [0.77, 0, 0.175, 1],
+            animDuration: 800,
 
             // Callback functions
             afterInit: function( currentSection, sectionsNumber  ) { return false; },
@@ -48,12 +48,64 @@
             Plugin.options.infoSelector = $( Plugin.options.infoSelector );
 
             // Global variables
-            Plugin.animating            = false;
-            Plugin.sectionsContainer    = $( sectionsContainer );
-            Plugin.sections             = Plugin.sectionsContainer.children('.vs-section');
-            Plugin.sectionsNumber       = Plugin.sections.length;
-            Plugin.currentSection       = Plugin.sections.filter('.active');
-            Plugin.currentSectionIndex  = Plugin.currentSection.index();
+            Plugin.animating           = false;
+            Plugin.sectionsContainer   = $( sectionsContainer );
+            Plugin.sections            = Plugin.sectionsContainer.children('.vs-section');
+            Plugin.sectionsNumber      = Plugin.sections.length;
+            Plugin.currentSection      = Plugin.sections.filter('.active');
+            Plugin.currentSectionIndex = Plugin.currentSection.index();
+
+            // Register Velocity effects
+            $.Velocity.RegisterEffect('vs_translateNone', {
+                defaultDuration: 1,
+                calls: [
+                    [{ translateZ: 0, translateX: '0%', translateY: '0%' }, 1, { easing: Plugin.options.animEasing }]
+                ]
+            });
+
+            $.Velocity.RegisterEffect('vs_translateUp', {
+                defaultDuration: 1,
+                calls: [
+                    [{ translateZ: 0, translateY: '-100%' }, 1, { easing: Plugin.options.animEasing }]
+                ]
+            });
+
+            $.Velocity.RegisterEffect('vs_translateUp.half', {
+                defaultDuration: 1,
+                calls: [
+                    [{ translateZ: 0, translateY: '-50%' }, 1, { easing: Plugin.options.animEasing }]
+                ]
+            });
+
+            $.Velocity.RegisterEffect('vs_translateDown', {
+                defaultDuration: 1,
+                calls: [
+                    [{ translateZ: 0, translateY: '100%' }, 1, { easing: Plugin.options.animEasing }]
+                ]
+            });
+
+            $.Velocity.RegisterEffect('vs_translateDown.half', {
+                defaultDuration: 1,
+                calls: [
+                    [{ translateZ: 0, translateY: '50%' }, 1, { easing: Plugin.options.animEasing }]
+                ]
+            });
+
+            $.Velocity.RegisterEffect('vs_bounceUp', {
+                defaultDuration: 1,
+                calls: [
+                    [{ translateZ: 0, translateY: '-10%' }, 1, { easing: Plugin.options.animEasing }],
+                    [{ translateZ: 0, translateY: '0%' }, 1, { easing: Plugin.options.animEasing }]
+                ]
+            });
+
+            $.Velocity.RegisterEffect('vs_bounceDown', {
+                defaultDuration: 1,
+                calls: [
+                    [{ translateZ: 0, translateY: '10%' }, 1, { easing: Plugin.options.animEasing }],
+                    [{ translateZ: 0, translateY: '0%' }, 1, { easing: Plugin.options.animEasing }]
+                ]
+            });
 
             if( Modernizr.mq('only screen and (max-width: 1200px)') ) {
                 // Change vh to px value on mobile and tablets
@@ -63,7 +115,7 @@
             // Position sections (except the current section)
             Plugin.sections.filter(function( i ) {
                 return i !== Plugin.currentSectionIndex;
-            }).velocity( Plugin.options.animations.bottom, 0 );
+            }).velocity( Plugin.options.animBottom, 0 );
 
             // Add informational classes
             _updateInfoClasses( Plugin.currentSection );
@@ -84,7 +136,7 @@
             // Callback
             Plugin.options.afterInit( Plugin.currentSection, Plugin.sectionsNumber );
 
-        }
+        };
 
         // Go to previous section
         Plugin.prev = function( loop ) {
@@ -101,9 +153,10 @@
         Plugin.moveTo = function( sectionIndex, loop ) {
             var nextSection;
             var animation;
+            var animationReverse;
 
             // Test if the slider is not already moving and the requested section is not the current one
-            if( !Plugin.animating && Plugin.currentSection.index() !== sectionIndex ) {
+            if( ! Plugin.animating && Plugin.currentSection.index() !== sectionIndex ) {
 
                 // Before move actions
                 Plugin.options.beforeMove( Plugin.currentSection, Plugin.sectionsNumber );
@@ -121,9 +174,8 @@
                     if( sectionIndex > Plugin.currentSectionIndex ) {
 
                         // Define animations
-                        animation        = 'vs_translateUp.half';
-                        animationEnd     = 'vs_translateUp';
-                        animationReverse = 'vs_translateDown';
+                        animation        = Plugin.options.animUpHalf;
+                        animationReverse = Plugin.options.animBottom;
 
                     }
 
@@ -131,9 +183,8 @@
                     else {
 
                         // Define animations
-                        animation        = 'vs_translateDown.half';
-                        animationEnd     = 'vs_translateDown';
-                        animationReverse = 'vs_translateUp';
+                        animation        = Plugin.options.animBottomHalf;
+                        animationReverse = Plugin.options.animUp;
 
                     }
 
@@ -141,22 +192,22 @@
                     _updateInfoClasses( nextSection );
 
                     // Position next section
-                    nextSection.addClass('active').velocity( animationReverse, {
+                    nextSection.addClass('active').velocity(animationReverse, {
                         duration: 0,
                         queue: false,
-                        easing: Plugin.options.animations.easing,
+                        easing: Plugin.options.animEasing,
 
                         complete: function() {
 
                             // Move out current section
                             Plugin.currentSection.removeClass('active').velocity(animation, {
-                                duration: Plugin.options.animations.duration,
-                                easing: Plugin.options.animations.easing,
+                                duration: Plugin.options.animDuration,
+                                easing: Plugin.options.animEasing,
                                 queue: false,
 
                                 complete: function() {
                                     // Reset section
-                                    Plugin.currentSection.velocity(Plugin.options.animations.bottom, {
+                                    Plugin.currentSection.velocity(Plugin.options.animBottom, {
                                         duration: 0,
                                         queue: false
                                     });
@@ -164,9 +215,9 @@
                             });
 
                             // Move in next section
-                            nextSection.velocity('vs_translateNone', {
-                                duration: Plugin.options.animations.duration,
-                                easing: Plugin.options.animations.easing,
+                            nextSection.velocity(Plugin.options.animVisible, {
+                                duration: Plugin.options.animDuration,
+                                easing: Plugin.options.animEasing,
                                 queue: false,
 
                                 complete: function() {
@@ -206,9 +257,9 @@
                             Plugin.animating = true;
 
                             // If not do the bouncing animation
-                            Plugin.currentSection.velocity(Plugin.options.animations.bounceDown, {
-                                duration: Plugin.options.animations.duration/2,
-                                easing: Plugin.options.animations.easing,
+                            Plugin.currentSection.velocity(Plugin.options.animBounceDown, {
+                                duration: Plugin.options.animDuration/2,
+                                easing: Plugin.options.animEasing,
 
                                 complete: function() {
                                     // Unlock vertical slider
@@ -234,9 +285,9 @@
                             Plugin.animating = true;
 
                             // If not do the bouncing animation
-                            Plugin.currentSection.velocity(Plugin.options.animations.bounceUp, {
-                                duration: Plugin.options.animations.duration/2,
-                                easing: Plugin.options.animations.easing,
+                            Plugin.currentSection.velocity(Plugin.options.animBounceUp, {
+                                duration: Plugin.options.animDuration/2,
+                                easing: Plugin.options.animEasing,
 
                                 complete: function() {
                                     // Unlock vertical slider
@@ -341,74 +392,22 @@
 
         };
 
-        // Register Velocity effects
-        $.Velocity.RegisterEffect('vs_translateNone', {
-            defaultDuration: 1,
-            calls: [
-                [{ translateZ: 0, translateX: '0%', translateY: '0%' }, 1, { easing: defaults.animations.easing }]
-            ]
-        });
-
-        $.Velocity.RegisterEffect('vs_translateDown', {
-            defaultDuration: 1,
-            calls: [
-                [{ translateZ: 0, translateY: '100%' }, 1, { easing: defaults.animations.easing }]
-            ]
-        });
-
-        $.Velocity.RegisterEffect('vs_translateDown.half', {
-            defaultDuration: 1,
-            calls: [
-                [{ translateZ: 0, translateY: '50%' }, 1, { easing: defaults.animations.easing }]
-            ]
-        });
-
-        $.Velocity.RegisterEffect('vs_translateUp', {
-            defaultDuration: 1,
-            calls: [
-                [{ translateZ: 0, translateY: '-100%' }, 1, { easing: defaults.animations.easing }]
-            ]
-        });
-
-        $.Velocity.RegisterEffect('vs_translateUp.half', {
-            defaultDuration: 1,
-            calls: [
-                [{ translateZ: 0, translateY: '-50%' }, 1, { easing: defaults.animations.easing }]
-            ]
-        });
-
-        $.Velocity.RegisterEffect('vs_bounceDown', {
-            defaultDuration: 1,
-            calls: [
-                [{ translateZ: 0, translateY: '10%' }, 1, { easing: defaults.animations.easing }],
-                [{ translateZ: 0, translateY: '0%' }, 1, { easing: defaults.animations.easing }]
-            ]
-        });
-
-        $.Velocity.RegisterEffect('vs_bounceUp', {
-            defaultDuration: 1,
-            calls: [
-                [{ translateZ: 0, translateY: '-10%' }, 1, { easing: defaults.animations.easing }],
-                [{ translateZ: 0, translateY: '0%' }, 1, { easing: defaults.animations.easing }]
-            ]
-        });
-
         // Call the "constructor" method
         _construct();
-    }
+    };
 
     // Add the plugin to jQuery.fn object
     $.fn.verticalSlider = function( options ) {
         // Iterate through the DOM elements we are attaching the plugin to
         return this.each(function() {
             // If plugin has not already been attached to the element
-            if ( undefined == $( this ).data('verticalSlider') ) {
+            if ( undefined === $( this ).data('verticalSlider') ) {
                 // Create a new instance of the plugin
                 var plugin = new $.verticalSlider( this, options );
                 // Store a reference to the plugin object
                 $( this ).data( 'verticalSlider', plugin );
             }
         });
-    }
+    };
 
 })( jQuery );

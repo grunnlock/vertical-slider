@@ -11,16 +11,16 @@ jQuery( document ).ready(function( $ ) {
         autoplay: false,
         autoplayDuration: 6000,
 
-        // Settings for the moveTo function animation
-        animations: {
-            visible:    'vs_translateNone',
-            top:        'vs_translateUp.half',
-            bottom:     'vs_translateDown',
-            bounceDown: 'vs_bounceDown',
-            bounceUp:   'vs_bounceUp',
-            easing:     'easeInCubic',
-            duration:   800
-        },
+        // Animations settings
+        animVisible: 'vs_translateNone',
+        animUp: 'vs_translateUp',
+        animUpHalf: 'vs_translateUp.half',
+        animBottom: 'vs_translateDown',
+        animBottomHalf: 'vs_translateDown.half',
+        animBounceUp: 'vs_bounceUp',
+        animBounceDown: 'vs_bounceDown',
+        animEasing: [0.77, 0, 0.175, 1],
+        animDuration: 800,
 
         // Callback functions
         afterInit: function( currentSection, sectionsNumber ) {
