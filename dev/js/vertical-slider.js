@@ -18,8 +18,8 @@
             animVisible: 'vs_translateNone',
             animUp: 'vs_translateUp',
             animUpHalf: 'vs_translateUp.half',
-            animBottom: 'vs_translateDown',
-            animBottomHalf: 'vs_translateDown.half',
+            animDown: 'vs_translateDown',
+            animDownHalf: 'vs_translateDown.half',
             animBounceUp: 'vs_bounceUp',
             animBounceDown: 'vs_bounceDown',
             animEasing: [0.77, 0, 0.175, 1],
@@ -56,56 +56,71 @@
             Plugin.currentSectionIndex = Plugin.currentSection.index();
 
             // Register Velocity effects
-            $.Velocity.RegisterEffect('vs_translateNone', {
-                defaultDuration: 1,
-                calls: [
-                    [{ translateZ: 0, translateX: '0%', translateY: '0%' }, 1, { easing: Plugin.options.animEasing }]
-                ]
-            });
 
-            $.Velocity.RegisterEffect('vs_translateUp', {
-                defaultDuration: 1,
-                calls: [
-                    [{ translateZ: 0, translateY: '-100%' }, 1, { easing: Plugin.options.animEasing }]
-                ]
-            });
+            if( Plugin.options.animVisible === 'vs_translateNone' ) {
+                $.Velocity.RegisterEffect(Plugin.options.animVisible, {
+                    defaultDuration: 1,
+                    calls: [
+                        [{ translateZ: 0, translateX: '0%', translateY: '0%' }, 1, { easing: Plugin.options.animEasing }]
+                    ]
+                });
+            }
 
-            $.Velocity.RegisterEffect('vs_translateUp.half', {
-                defaultDuration: 1,
-                calls: [
-                    [{ translateZ: 0, translateY: '-50%' }, 1, { easing: Plugin.options.animEasing }]
-                ]
-            });
+            if( Plugin.options.animUp === 'vs_translateUp' ) {
+                $.Velocity.RegisterEffect(Plugin.options.animUp, {
+                    defaultDuration: 1,
+                    calls: [
+                        [{ translateZ: 0, translateY: '-100%' }, 1, { easing: Plugin.options.animEasing }]
+                    ]
+                });
+            }
 
-            $.Velocity.RegisterEffect('vs_translateDown', {
-                defaultDuration: 1,
-                calls: [
-                    [{ translateZ: 0, translateY: '100%' }, 1, { easing: Plugin.options.animEasing }]
-                ]
-            });
+            if( Plugin.options.animUpHalf === 'vs_translateUp.half' ) {
+                $.Velocity.RegisterEffect(Plugin.options.animUpHalf, {
+                    defaultDuration: 1,
+                    calls: [
+                        [{ translateZ: 0, translateY: '-50%' }, 1, { easing: Plugin.options.animEasing }]
+                    ]
+                });
+            }
 
-            $.Velocity.RegisterEffect('vs_translateDown.half', {
-                defaultDuration: 1,
-                calls: [
-                    [{ translateZ: 0, translateY: '50%' }, 1, { easing: Plugin.options.animEasing }]
-                ]
-            });
+            if( Plugin.options.animDown === 'vs_translateDown' ) {
+                $.Velocity.RegisterEffect(Plugin.options.animDown, {
+                    defaultDuration: 1,
+                    calls: [
+                        [{ translateZ: 0, translateY: '100%' }, 1, { easing: Plugin.options.animEasing }]
+                    ]
+                });
+            }
 
-            $.Velocity.RegisterEffect('vs_bounceUp', {
-                defaultDuration: 1,
-                calls: [
-                    [{ translateZ: 0, translateY: '-10%' }, 1, { easing: Plugin.options.animEasing }],
-                    [{ translateZ: 0, translateY: '0%' }, 1, { easing: Plugin.options.animEasing }]
-                ]
-            });
+            if( Plugin.options.animDownHalf === 'vs_translateDown.half' ) {
+                $.Velocity.RegisterEffect(Plugin.options.animDownHalf, {
+                    defaultDuration: 1,
+                    calls: [
+                        [{ translateZ: 0, translateY: '50%' }, 1, { easing: Plugin.options.animEasing }]
+                    ]
+                });
+            }
 
-            $.Velocity.RegisterEffect('vs_bounceDown', {
-                defaultDuration: 1,
-                calls: [
-                    [{ translateZ: 0, translateY: '10%' }, 1, { easing: Plugin.options.animEasing }],
-                    [{ translateZ: 0, translateY: '0%' }, 1, { easing: Plugin.options.animEasing }]
-                ]
-            });
+            if( Plugin.options.animBounceUp === 'vs_bounceUp' ) {
+                $.Velocity.RegisterEffect(Plugin.options.animBounceUp, {
+                    defaultDuration: 1,
+                    calls: [
+                        [{ translateZ: 0, translateY: '-10%' }, 1, { easing: Plugin.options.animEasing }],
+                        [{ translateZ: 0, translateY: '0%' }, 1, { easing: Plugin.options.animEasing }]
+                    ]
+                });
+            }
+
+            if( Plugin.options.animBounceDown === 'vs_bounceDown' ) {
+                $.Velocity.RegisterEffect(Plugin.options.animBounceDown, {
+                    defaultDuration: 1,
+                    calls: [
+                        [{ translateZ: 0, translateY: '10%' }, 1, { easing: Plugin.options.animEasing }],
+                        [{ translateZ: 0, translateY: '0%' }, 1, { easing: Plugin.options.animEasing }]
+                    ]
+                });
+            }
 
             if( Modernizr.mq('only screen and (max-width: 1200px)') ) {
                 // Change vh to px value on mobile and tablets
@@ -115,7 +130,7 @@
             // Position sections (except the current section)
             Plugin.sections.filter(function( i ) {
                 return i !== Plugin.currentSectionIndex;
-            }).velocity( Plugin.options.animBottom, 0 );
+            }).velocity( Plugin.options.animDown, 0 );
 
             // Add informational classes
             _updateInfoClasses( Plugin.currentSection );
@@ -175,7 +190,7 @@
 
                         // Define animations
                         animation        = Plugin.options.animUpHalf;
-                        animationReverse = Plugin.options.animBottom;
+                        animationReverse = Plugin.options.animDown;
 
                     }
 
@@ -183,7 +198,7 @@
                     else {
 
                         // Define animations
-                        animation        = Plugin.options.animBottomHalf;
+                        animation        = Plugin.options.animDownHalf;
                         animationReverse = Plugin.options.animUp;
 
                     }
@@ -207,7 +222,7 @@
 
                                 complete: function() {
                                     // Reset section
-                                    Plugin.currentSection.velocity(Plugin.options.animBottom, {
+                                    Plugin.currentSection.velocity(Plugin.options.animDown, {
                                         duration: 0,
                                         queue: false
                                     });
@@ -266,7 +281,7 @@
                                     Plugin.animating = false;
 
                                     // Callback
-                                    Plugin.options.afterMove();
+                                    Plugin.options.afterMove( Plugin.currentSection, Plugin.sectionsNumber );
                                 }
                             });
                         }
