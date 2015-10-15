@@ -7,8 +7,8 @@ module.exports = function( grunt ) {
 		dev:  'dev',
 		dist: 'www',
 		folders: {
-			js:     'js',
-			css:    'css'
+			js:  'js',
+			css: 'css'
 		}
 	};
 
